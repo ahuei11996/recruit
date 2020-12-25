@@ -1,0 +1,137 @@
+<template>
+  <div>
+    <div class="shara-back" @click.stop="stopDom">
+    <div class="share-content">
+      <button class="basics-button share-content-button margin-left-lg" plain @click="WXSceneSession">
+        <image class="share-app-image basics-image share-button-image" mode="aspectFit" src="/static/images/weixin.png" />
+        <text class="text-sm text-gray margin-top-xs">微信</text>
+      </button>
+      <button class="basics-button share-content-button margin-left-lg" plain @click="WXSenceTimeline">
+        <image class="share-app-image basics-image share-button-image" mode="aspectFit" src="/static/images/pengyouquan.png" />
+        <text class="text-sm text-gray margin-top-xs">朋友圈</text>
+      </button>
+    </div>
+    <div class="close">
+      <button class="basics-button close-button" plain @click="close">
+        <text class="text-sm text-gray">取消</text>
+      </button>
+    </div>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'Share',
+  onLoad() {
+    // 接收全局传参-通信
+    uni.$on('share', (data) => {
+      this.shareContent = data
+    })
+  },
+  onUnload() {
+    // 移除监听事件
+    uni.$off('share')
+  },
+  data() {
+    return {
+      shareContent: {}
+    }
+  },
+  methods: {
+    WXSceneSession() {
+      console.log(this.shareContent)
+      const share = Object.assign({
+        provider: 'weixin',
+        scene: 'WXSceneSession', // 微信朋友圈
+        type: 0,
+        success: (res) => {
+          this.close()
+          console.log(2)
+        }
+      }, this.shareContent)
+      uni.share(share)
+    },
+    WXSenceTimeline() {
+      const share = Object.assign({
+        provider: 'weixin',
+        scene: 'WXSenceTimeline', // 微信朋友圈
+        type: 0,
+        success: (res) => {
+          this.close()
+        }
+      }, this.shareContent)
+      uni.share(share)
+    },
+    close() {
+      uni.$emit('close', true)
+    },
+    stopDom() {
+      return ''
+    }
+  }
+}
+</script>
+
+<style>
+
+.basics-button {
+  border-width: 0;
+}
+
+.shara-back {
+  position: fixed;
+  bottom: 0;
+  width: 750rpx;
+  border-top-left-radius: 40rpx !important;
+  border-top-right-radius: 40rpx !important;
+  background-color: #ffffff;
+}
+
+.share-content {
+// #ifndef APP-NVUE
+display: flex;
+// #endif
+flex-direction: row;
+  justify-content: center;
+  padding-top: 40rpx;
+  padding-left: 30rpx;
+  padding-right: 30rpx;
+  padding-bottom: 40rpx;
+}
+
+.share-content-button {
+  flex-direction: column;
+}
+
+.share-button-image {
+  width: 100%;
+  height: 82rpx;
+}
+
+.share-app-image {
+  width: 68rpx;
+  height: 68rpx;
+}
+
+.margin-left-lg:first-child{
+  margin: 0;
+}
+
+.close {
+  width: 750rpx;
+  border-width: 2px;
+  border-style: solid;
+  border-color: #dedede;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-button {
+  width: 750rpx;
+  height: 52px;
+  font-size: 26rpx;
+}
+
+</style>

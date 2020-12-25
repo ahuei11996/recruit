@@ -1,0 +1,284 @@
+<template>
+  <div class="container">
+    <div class="top">
+      <image class="top-back-image" mode="aspectFill" src="https://media.hainanplus.cn/editimage/20201210/9894de3746035f343ecd0fff32384338.jpg" />
+      <div class="top-back-mask" />
+    </div>
+    <div class="content">
+<!--      <div class="content-back-mask" style="position:absolute; left: 0; top:0; height: 100vh; width: 750rpx; background-image: linear-gradient(to bottom,rgba(185,185,185,0.38),rgba(255,255,255,1))"></div>-->
+      <div class="padding-right padding-left padding-top padding-bottom-lg info-back">
+        <div class="flex-row author-headimg">
+          <image mode="aspectFill" class="author-headimg-image" src="https://media.hainanplus.cn/editimage/20201210/9894de3746035f343ecd0fff32384338.jpg" />
+          <button class="basics-button author-info-follor" type="primary">
+            <text class="text-df text-white">+ 关注</text>
+          </button>
+        </div>
+
+        <text class="text-xxl margin-top-lg">网新社</text>
+        <div>
+          <text class="iconfont text-gray">&#xe63e;</text>
+          <text class="text-df">给你带来专业评车</text>
+          <text class="iconfont text-gray">&#xe63d;</text>
+        </div>
+        <div style="display: flex; flex-direction: row;">
+          <text class="margin-right-sm text-black text-sm">27</text>
+          <text class="margin-right-sm text-gray text-sm">粉丝</text>
+          <text class="margin-right-sm text-black text-sm">89</text>
+          <text class="margin-right-sm text-gray text-sm">作品</text>
+        </div>
+      </div>
+      <div class="padding info-back margin-top-lg">
+        <div class="flex-row" style="align-items: center">
+          <div class="margin-right-sm" stlye="flex: 0;">
+
+            <image style="width: 88rpx; height: 88rpx; border-radius: 10rpx;" src="https://media.hainanplus.cn/editimage/20201210/9894de3746035f343ecd0fff32384338.jpg" />
+          </div>
+          <div style="flex:1;">
+            <div class="flex-row" style="align-items: center">
+              <text class="text-lg">聊车一分钟</text>
+              <text class="text-xs margin-left-sm" style="width: 52rpx; height: 28rpx; line-height: 28rpx; color: #ffffff; text-align: center; border-radius: 8rpx; background-color: #019bff">视频</text>
+            </div>
+            <div class="margin-top flex-row" style="justify-content: space-between; width: 100%;">
+              <text class="text-sm text-gray">这里有最全的新车资讯</text>
+              <text class="iconfont text-sm text-gray">&#xe699;</text>
+            </div>
+          </div>
+        </div>
+      </div>
+<!--      <div class="flex-row nav-body" :style="{top:navTop + 'px'}">-->
+      <div id="nav-body" class="flex-row nav-body margin-top-lg">
+        <button class="basics-button nav-button" plain @click="navIndex = 0">
+          <text :class="navIndex == 0 ?'text-xl text-black text-bold' : 'text-df text-gray'">全部</text>
+        </button>
+        <button class="basics-button margin-left nav-button" plain @click="navIndex = 1">
+          <text :class="navIndex == 1 ?'text-xl text-black text-bold' : 'text-df text-gray'">文章</text>
+        </button>
+        <button class="basics-button margin-left nav-button" plain @click="navIndex = 2">
+          <text :class="navIndex == 2 ?'text-xl text-black text-bold' : 'text-df text-gray'">视频</text>
+        </button>
+      </div>
+      <div class="margin-top" :style="{height:listHeight + 'px'}">
+        <list>
+          <cell>
+            <div class="padding-top padding-bottom cell-list">
+              <div class="news-list-double padding-top padding-bottom">
+                <div class="list-title">
+                  <text class="text-lg list-title-text">
+                    lajsldjflasjflajslfjalsflsdjfljsalfjsaljfalsjsdfasdfasffajsldjflasjflajslfjalsflsdjfljsalfjsaljfalsjsdfasdfasff
+                  </text>
+                </div>
+                <div class="flex-row list-double-image margin-top">
+                  <image class="list-image-body" src="https://media.hainanplus.cn/editimage/20201210/9894de3746035f343ecd0fff32384338.jpg" />
+                  <image class="list-image-body" src="https://media.hainanplus.cn/editimage/20201210/9894de3746035f343ecd0fff32384338.jpg" />
+                  <image class="list-image-body" src="https://media.hainanplus.cn/editimage/20201210/9894de3746035f343ecd0fff32384338.jpg" />
+                </div>
+              </div>
+              <div class="flex-row margin-top sub-title">
+                <text class="text-sm text-gray">网新社</text>
+                <text class="text-sm text-gray">12-13</text>
+              </div>
+            </div>
+          </cell>
+          <cell>
+            <div class="padding-top padding-bottom cell-list">
+              <div class="news-list-single flex-row">
+                <div class="list-single-title">
+                  <text class="text-lg list-title-text">
+                    lajsldjflasjflajslfjalsflsdjfljsalfjsaljfalsjsdfasdfasffajsldjflasjflajslfjalsflsdjfljsalfjsaljfalsjsdfasdfasff
+                  </text>
+                </div>
+                <div class="list-single-image">
+                  <image
+class="list-image-body"
+                         src="https://media.hainanplus.cn/editimage/20201210/9894de3746035f343ecd0fff32384338.jpg"
+/>
+                </div>
+              </div>
+              <div class="flex-row margin-top sub-title">
+                <text class="text-sm text-gray">网新社</text>
+                <text class="text-sm text-gray">12-13</text>
+              </div>
+            </div>
+          </cell>
+        </list>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'Author',
+  data() {
+    return {
+      navIndex: 0,
+      navTop: 0,
+      listHeight: 0,
+      scrollVal: 344,
+      srcollTop: 0
+    }
+  },
+  onPageScroll(e) {
+    this.srcollTop = e.scrollTop
+    console.log(e.scrollTop)
+  },
+  mounted() {
+    const systemInfo = uni.getSystemInfoSync()
+    this.navTop = systemInfo.statusBarHeight + 44
+
+    console.log(systemInfo)
+
+    this.listHeight = systemInfo.windowHeight - systemInfo.statusBarHeight - 44 - 50
+    // #ifdef APP-PLUS
+    const domModule = weex.requireModule('dom')
+    domModule.addRule('fontFace', {
+      'fontFamily': 'iconfont',
+      'src': "url('https://at.alicdn.com/t/font_2245848_bynnk2k1j3u.ttf')"
+    })
+    // #endif
+  }
+}
+</script>
+
+<style scoped>
+
+.iconfont {
+  font-family: iconfont;
+}
+
+.basics-button {
+  border-width: 0;
+}
+
+.flex-row {
+  /* #ifndef APP-PLUS */
+  display: flex;
+  /* #endif */
+  flex-direction: row;
+}
+
+.flex-column {
+  /* #ifndef APP-PLUS */
+  display: flex;
+  /* #endif */
+  flex-direction: column;
+}
+
+.content {
+  position: relative;
+  padding-left: 36rpx;
+  padding-right: 36rpx;
+  margin-top: -125rpx;
+}
+
+.info-back {
+  /*height: 456rpx;*/
+  width: 678rpx;
+  background-color: #ffffff;
+  border-radius: 20rpx;
+  box-shadow:0 0 22rpx 10rpx rgba(11, 11, 11,0.11)
+}
+
+.top {
+  position: relative;
+  width: 750rpx;
+  height: 372rpx;
+  z-index: -1;
+}
+
+.top-back-image {
+  width: 750rpx;
+  height: 372rpx;
+}
+
+.top-back-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 750rpx;
+  height: 372rpx;
+  background-image: linear-gradient(to top,rgba(0,0,0,0.86), rgba(0,0,0,0.28));
+  opacity: 0.46;
+}
+
+.author-headimg {
+  margin-top: -90rpx;
+  height: 158rpx;
+  position: relative;
+  flex-direction: row-reverse;
+  align-items: flex-end;
+}
+
+.author-headimg-image {
+  position: absolute;
+  bottom: 0;
+  left:0;
+  width: 158rpx;
+  height: 158rpx;
+  border-radius: 158rpx;
+}
+
+.author-info-follor {
+  width: 128rpx;
+  height: 68rpx;
+  border-radius: 10rpx;
+}
+
+.nav-body {
+  position: sticky;
+  /*top: 200px;*/
+  align-items: flex-end;
+  background-color: #ffffff;
+  width: 750rpx;
+  height: 50px;
+  padding-left: 36rpx;
+  padding-right: 36rpx;
+  margin-left: -36rpx;
+  padding-bottom: 20rpx;
+  z-index: 1;
+}
+
+.news-list-single {
+
+}
+
+.list-single-title {
+  /*width: 100%;*/
+  flex: 1;
+}
+
+.list-single-image {
+  flex: 0;
+  margin-left: 72rpx;
+  height: 166rpx;
+}
+
+.list-title-text {
+  /*width: 100%;*/
+  text-overflow: ellipsis;
+  lines: 2;
+  /*line-height: 1.5;*/
+}
+
+.list-double-image {
+  justify-content: space-between;
+  border-radius: 10rpx;
+  overflow: hidden;
+}
+
+.list-image-body {
+  width: 220rpx;
+  height: 166rpx;
+}
+
+.sub-title {
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cell-list {
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-bottom-color: #dedede;
+}
+</style>

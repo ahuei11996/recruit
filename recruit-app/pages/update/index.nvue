@@ -1,0 +1,392 @@
+<!--
+  Maintainer: Magiclock
+  update_time: 2020/12/06
+-->
+<template>
+  <view class="flex-column margin-top-xl">
+    <view class="content">
+      <view style="display: flex; justify-content: center;">
+        <u-image
+          class="logo"
+          style="width:400rpx;"
+          mode="widthFix"
+          src="https://www.hainanplus.cn/static/index/images/logo.png"
+        />
+      </view>
+      <view class="mainInfo margin-top-xl">
+        <view class="title">recruit</view>
+        <!-- #ifndef H5 -->
+        <view class="text-lg margin-top-sm">Version {{ version }}</view>
+        <!-- #endif -->
+        <view v-if="Mtip" class="tip margin-top-sm line-height-1" :class="!currentIsLatest?'text-green':'text-gray'">
+          <view class="text-df" :class="currentIsLatest?'icon-success':'icon-prompt'" />
+          <view class="margin-left-xs text-sm" :style="{'color': currentIsLatest ? 'red' : '' }">{{ Mtip }}</view>
+        </view>
+      </view>
+    </view>
+    <view v-if="!currentIsLatest">
+      <view class="line" />
+      <view>
+        <view class="infoContentTitle">
+          <text class="infoTitle">更新内容</text>
+        </view>
+        <view class="infoContent">
+          <view class="updateInfo">
+            <view v-for="(item, index) in log" :key="index">{{ item }}</view>
+          </view>
+        </view>
+      </view>
+      <view>
+        <view class="infoContentTitle">
+          <text class="infoTitle">更新大小</text>
+        </view>
+        <view class="infoContent">
+          <text class="updateInfo margin-left-sm">{{ packageSize }}</text>
+        </view>
+      </view>
+    </view>
+    <view v-else>
+      <!--      <tui-list-cell arrow padding="0" />-->
+      <tui-list-cell arrow padding="0" @click="navTo('/detail/agreement/system')">
+        <view class="padding-xl flex align-center justify-between">
+          <view class="tui-cell-title">软件使用协议</view>
+        </view>
+      </tui-list-cell>
+      <tui-list-cell arrow padding="0" @click="navTo('/detail/agreement/eula')">
+        <view class="padding-xl flex align-center justify-between">
+          <view class="tui-cell-title">法律声明与隐私协议</view>
+        </view>
+      </tui-list-cell>
+      <!--      <tui-list-cell arrow padding="0">-->
+      <!--        <view class="padding-xl flex align-center justify-between">-->
+      <!--          <view class="tui-cell-title">更新日志</view>-->
+      <!--        </view>-->
+      <!--      </tui-list-cell>-->
+    </view>
+    <!-- #ifndef H5 -->
+    <view class="bottom-box margin-top-xl">
+      <view v-if="startProgress && !currentIsLatest" class="smallTitle">
+        <text>下载进度:{{ downloadProgress }}%</text>
+        <progress :percent="downloadProgress" stroke-width="5" />
+      </view>
+      <u-button
+        v-if="!startProgress && !currentIsLatest"
+        type="primary"
+        :loading="buttonLoading"
+        :disabled="buttonLoading"
+        class="updateButton"
+        @click="handleUpdate"
+      >立即更新
+      </u-button>
+      <u-button v-if="currentIsLatest" type="primary" class="updateButton" :loading="buttonLoading" :disabled="buttonLoading" @click="getLatest">检查更新
+      </u-button>
+      <u-button class="updateButton" @click="goBack">稍后更新
+      </u-button>
+    </view>
+    <!-- #endif -->
+  </view>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      t: (new Date()).valueOf(),
+      force: false, // 强制更新
+      info: '正在加载', // 主标题显示版本号
+      version: '',
+      build: '',
+      newVersion: '',
+      newBuild: '',
+      Mtip: '', // 小提示标语
+      updateInfo: '', // 更新摘要
+      log: [], // 更新日志
+
+      latest: null, // 版本信息
+      packageSize: '', // 更新包大小
+      packagePath: null, // 更新包的文件地址
+      downloadTask: null, // 下载任务
+      downloadProgress: 0, // 下载进度
+
+      buttonLoading: false, // 加载 - 标记
+      installed: false, // 是否执行了安装 - 标记
+      startProgress: false, // 下载进行 - 标记
+      currentIsLatest: true // 当前版本就是最新版本 - 标记
+    }
+  },
+  onLoad(options) {
+    const that = this
+    if (options && options.force) {
+      this.force = options.force == 'true'
+    }
+    // #ifdef APP-PLUS
+    plus.runtime.getProperty(plus.runtime.appid, function(wgtinfo) {
+      // version属性
+      that.version = wgtinfo.version
+      that.build = wgtinfo.versionCode
+      if (that.force) {
+        that.getLatest()
+      }
+    })
+    // #endif
+    const updated = uni.getStorageSync('updated')
+    if (updated.packagePath) {
+      this.packagePath = updated.packagePath
+    }
+  },
+  // 如果用户下载后没有完成安装，却回到app，则执行这里
+  onShow() {
+    if (this.installed === true && this.packagePath) {
+      this.installed = false
+      this.haveDownloaded()
+    }
+  },
+  // 用户关闭页面时检查是否存在下载任务
+  onUnload() {
+    if (this.downloadTask) {
+      this.closeTask()
+      this.showToast('更新被取消')
+    }
+  },
+  methods: {
+    goBack() {
+      uni.switchTab({
+        'url': '/pages/index/index'
+      })
+    },
+    // 封装个Toast方便用
+    showToast(text) {
+      uni.showToast({
+        title: text,
+        duration: 3000,
+        icon: 'none'
+      })
+    },
+    installPackage() {
+      // 安装更新
+      plus.runtime.install(this.packagePath, { force: true })
+      this.installed = true
+      // 保存更新记录到stroage，方便下次启动app时删除安装包
+      uni.setStorage({
+        key: 'updated',
+        data: {
+          completed: true,
+          packagePath: this.packagePath
+        },
+        success: (res) => {
+          console.log('成功保存更新记录')
+        }
+      })
+      // 判断是否为热更新（判断文件名中是否含有.wgt）
+      if (this.packagePath.match(RegExp(/.wgt/))) {
+        this.installed = false
+        uni.showModal({
+          title: '提示',
+          content: '应用将重启以完成更新',
+          showCancel: false,
+          complete: () => {
+            plus.runtime.restart()
+          }
+        })
+      }
+    },
+    // 已经下载了更新包但是没有安装
+    haveDownloaded() {
+      uni.showModal({
+        title: '更新尚未完成',
+        content: '您已下载更新包，但是还没有完成安装，请问是否要继续安装更新包呢？',
+        success: (res) => {
+          if (res.confirm) {
+            // 安装
+            this.installPackage()
+          } else if (res.cancel) {
+            this.showToast('更新被取消')
+          }
+        }
+      })
+    },
+    // 取得最新版本及其所有信息
+    getLatest() {
+      this.info = '正在加载' // 主标题显示版本号
+      this.updateInfo = '无' // 更新摘要
+      this.buttonLoading = true
+      this.latest = null
+      uni.request({
+        url: this.updateUrl + '?t=' + this.t,
+        success: (res) => {
+          if (res.statusCode === 200) {
+            const data = res.data
+            this.latest = data.app.info
+            this.buttonLoading = false
+            this.checkLatest()
+          }
+        }
+      })
+    },
+    // 检查版本
+    checkLatest() {
+      let _packageSize
+      this.newVersion = this.latest.version
+      this.newBuild = this.latest.build
+      if (this.version != this.newVersion) {
+        this.currentIsLatest = false
+        this.Mtip = '发现新版本 V' + this.newVersion
+        this.updateInfo = this.latest.info
+        this.log = this.latest.log
+        _packageSize = this.isBigVersion() ? this.latest.appPackageSize : this.latest.wgtPackageSize
+        this.packageSize = (_packageSize / 1024).toFixed(2) + 'MB' // 请求取得的packageSize是字节大小，转换为保留两位小数的MB
+      } else {
+        this.currentIsLatest = true
+        this.Mtip = '已是最新版本'
+        this.updateInfo = this.latest.info
+      }
+    },
+    // 关闭下载任务
+    closeTask() {
+      this.downloadTask.abort()
+      this.downloadTask = null
+      this.startProgress = false
+    },
+    // 开始下载任务
+    createTask(downloadLink) {
+      // 判断是否已经存在任务
+      if (this.packagePath) {
+        this.haveDownloaded()
+      } else {
+        this.downloadProgress = 0
+        this.startProgress = true
+        // 创建下载任务对象
+        this.downloadTask = uni.downloadFile({
+          url: downloadLink + '?t=' + this.t,
+          success: (res) => {
+            if (res.statusCode === 200) {
+              // 保存下载的安装包
+              uni.saveFile({
+                tempFilePath: res.tempFilePath,
+                success: (res) => {
+                  this.packagePath = res.savedFilePath
+                  // 进行安装
+                  this.installPackage()
+                  // 任务完成，关闭下载任务
+                  this.closeTask()
+                }
+              })
+            }
+          }
+        })
+        // 进度条更新
+        this.downloadTask.onProgressUpdate((res) => {
+          this.downloadProgress = res.progress
+        })
+      }
+    },
+    handleUpdate() {
+      // 判断系统类型
+      if (!this.isBigVersion() && this.latest.wgtLink && this.latest.wgtLink !== '#') {
+        // 小版本更新只需热更新即可
+        this.createTask(this.latest.wgtLink)
+      } else {
+        if (plus.os.name.toLowerCase() === 'android') {
+          if (this.latest.androidLink && this.latest.androidLink !== '#') { // 我这里默认#也是没有地址，请根据业务自行修改
+            // 安卓大版本更新则下载完整包
+            // 安卓：创建下载任务
+            this.createTask(this.latest.androidLink)
+          } else {
+            this.showToast('未找到下载地址')
+          }
+        } else {
+          if (this.latest.iosLink && this.latest.iosLink !== '#') { // 我这里默认#也是没有地址，请根据业务自行修改
+            // 苹果(B)：打开商店链接（如果iosLink是苹果商店的地址）
+            plus.runtime.openURL(this.latest.iosLink)
+          } else {
+            this.showToast('未找到ios商店地址')
+          }
+        }
+      }
+    },
+
+    // 判断是否是大版本更新
+    isBigVersion() {
+      const oldVersion = this.version.split('.')
+      const newVersion = this.newVersion.split('.')
+      if (newVersion[0] > oldVersion[0] || newVersion[1] > oldVersion[1]) {
+        return true
+      } else {
+        return false
+      }
+    },
+
+    navTo(url) {
+      this.util.navTo(url)
+    }
+  }
+}
+</script>
+
+<style>
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+.content {
+  text-align: center;
+}
+.process {
+  margin-top: 200rpx;
+  margin-left: 30%;
+}
+.logo {
+  height: 200rpx;
+  width: 200rpx;
+  margin-top: 50rpx;
+}
+.title {
+  font-size: 36rpx;
+  color: #373737;
+  font-weight: bold;
+}
+.infoTitle {
+  font-size: 32upx;
+  color: #373737;
+  padding-left: 15upx;
+  font-weight: bold;
+}
+.tip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.line {
+  width: 100%;
+  padding: 20rpx;
+  border-bottom: 2rpx solid #f5f5f5;
+}
+.infoPic {
+  height: 50upx;
+  width: 50upx;
+}
+.infoContentTitle {
+  display: flex;
+  align-items: center;
+  padding: 40upx 40upx;
+}
+.infoContent {
+  display: flex;
+  align-items: center;
+}
+.updateInfo {
+  font-size: 28upx;
+  color: #7E7E83;
+  padding: 0 60rpx;
+}
+.smallTitle {
+  font-size:26upx;
+  font-weight:500;
+  padding:20upx 0;
+  line-height:1.5;
+  color:#888;
+}
+.updateButton {
+  margin-top: 40rpx;
+}
+</style>

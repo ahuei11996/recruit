@@ -1,0 +1,160 @@
+<template>
+  <div v-if="show" class="container">
+    <div class="mask">
+      <div class="mask-back-content">
+        <div class="cu-form-group">
+          <textarea id="textarea" class="mask-back-textarea-body"
+                    cursor-spacing="5" placeholder="有态度的评论更容易当选【神评】" @input="input" @keyboardheightchange="keyboardheightchange" />
+        </div>
+        <div class="input-other">
+          <div class="input-other-handle">
+            <text class="input-other-handle-text">常用</text>
+          </div>
+          <div class="input-other-handle">
+            <button class="basics-button" plain @click="syncData = !syncData">
+              <div v-if="!syncData" class="margin-right-xs syncDataNo" />
+              <text v-else class="margin-right-xs icon-yes syncDataYes" />
+              <text class="basics-button-text">同步生成动态</text>
+            </button>
+          </div>
+
+        </div>
+        <div class="input-other">
+          <button class="basics-button" @click="send">
+            <text class="iconfont button-icon">&#xe644;</text>
+          </button>
+          <button class="basics-button button-send" @click="send">
+            <text class="button-send-text">发送</text>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'Comment',
+  data() {
+    return {
+      comment: '',
+      show: true,
+      adjust: false
+    }
+  },
+  mounted() {
+    uni.onKeyboardHeightChange(res => {
+      console.log(1111, res.height)
+    })
+  },
+  methods: {
+    keyboardheightchange(e) {
+      console.log(111,e)
+      this.adjust = true
+    },
+    input(e) {
+      console.log(e)
+    }
+  }
+}
+</script>
+
+<style scoped>
+
+/*.mask-back {*/
+/*  position: fixed;*/
+/*  top:0;*/
+/*  left: 0;*/
+/*  width: 750rpx;*/
+/*  z-index: 999999999999999;*/
+/*}*/
+
+/*.mask-back-background {*/
+/*  width: 750rpx;*/
+/*  background-color: rgba(0,0,0,0.68);*/
+/*}*/
+
+.basics-button{
+	border-width: 0;
+}
+
+.mask-back-content {
+  padding: 30rpx;
+  width: 750rpx;
+  position: fixed;
+   bottom: 0;
+  background-color: #ffffff;
+}
+
+.button-icon {
+  font-size: 40rpx;
+}
+
+.button-send{
+  width: 74rpx;
+  height: 44rpx;
+  background-color: #109bff;
+  border-radius: 0;
+}
+
+.button-send-text {
+  font-size: 20rpx;
+  color: #ffffff;
+}
+
+.mask-back-textarea {
+  border-width: 1px;
+  border-color: #dedede;
+  border-style: solid;
+  border-width:1px;
+  border-style:solid;
+  border-color:#dedede;
+  padding: 0 30rpx;
+}
+
+.mask-back-textarea-body{
+  height: 200rpx;
+}
+
+.input-other{
+  /* #ifndef APP-PLUS */
+  display: flex;
+  /* #endif */
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  height: 80rpx;
+  border-top-width: 1px;
+  border-top-style: solid;
+  border-top-color: #dedede;
+}
+
+.input-other-handle{
+  /* #ifndef APP-PLUS */
+  display: flex;
+  /* #endif */
+  flex-direction: row;
+  align-items: center;
+}
+.input-other-handle-text{
+  color: #c2cacb;
+  font-size: 24rpx;
+}
+.syncDataNo{
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 40rpx;
+  border-width:1px;
+  border-style: solid;
+  border-color: #dedede;
+}
+.syncDataYes{
+  color: #019BFF;
+  font-size: 40rpx;
+  line-height: 1;
+}
+.basics-button-text{
+  color: #999999;
+  font-size: 24rpx;
+}
+</style>

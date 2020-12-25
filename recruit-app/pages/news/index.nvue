@@ -1,0 +1,1275 @@
+<!--
+  Author: Magiclock
+  create_time: 2020/12/09
+-->
+
+<template>
+  <div class="container">
+    <plus-list>
+      <plus-cell ref="detail">
+        <div class="padding-top-lg padding-bottom-lg module-content">
+          <div>
+            <text style="font-size:44rpx;">{{ detail.title }}</text>
+          </div>
+          <div class="margin-top-lg author-info">
+            <div class="margin-right-sm author-info-headimg">
+              <image mode="aspectFill" class="author-info-headimg-image" :src="detail.author_info.headimg" />
+            </div>
+            <div class="author-info-detail">
+              <div class="author-info-detail-name">
+                <text class="author-info-detail-name-text">{{ detail.author }}-新闻频道</text>
+                <text class="margin-left-xs author-info-detail-name-post">编辑</text>
+              </div>
+              <div class="author-info-detail-num">
+                <text class="author-info-detail-name-text">{{ detail.view_count }}浏览 / {{ detail.post_time }}</text>
+              </div>
+            </div>
+            <button class="basics-button follow-button" type="primary" @click="follow">
+              <text class="follow-button-text">+ 关注</text>
+            </button>
+          </div>
+          <div class="margin-top-lg padding-left-sm padding-right-sm tips">
+            <text class="tips-text">本文共</text>
+            <text class="tips-text-color">473</text>
+            <text class="tips-text">个字，</text>
+            <text class="tips-text">4</text>
+            <text class="tips-text">张图，阅读约需</text>
+            <text class="tips-text">30</text>
+            <text class="tips-text">秒</text>
+          </div>
+          <div class="margin-top-lg">
+            <u-parse :html="detail.content" />
+          </div>
+          <div class="tab">
+            <button class="basics-button tab-button">
+              <text class="tab-button-text">海外谍照</text>
+            </button>
+            <button class="basics-button tab-button">
+              <text class="tab-button-text">带你懂行业</text>
+            </button>
+            <button class="basics-button tab-button">
+              <text class="tab-button-text">电动车新闻</text>
+            </button>
+          </div>
+          <div class="score-title">
+            <div class="score-back">
+              <div class="score-line" />
+              <div class="score-text">
+                <text class="score-text-body">你觉得本文如何？</text>
+              </div>
+            </div>
+          </div>
+          <div class="score">
+            <button class="basics-button score-button" plain @click="handleScore(1)">
+              <text class="iconfont _icon-star" :class="{'_icon-star-active' : star_icon > 0}">&#xe611;</text>
+              <div class="score-evaluate">
+                <text class="score-evaluate-text" :class="{'score-evaluate-active' : star_icon == 1}">很差</text>
+              </div>
+            </button>
+            <button class="basics-button score-button" plain @click="handleScore(2)">
+              <text class="iconfont _icon-star" :class="{'_icon-star-active' : star_icon > 1}">&#xe611;</text>
+              <div class="score-evaluate">
+                <text class="score-evaluate-text" :class="{'score-evaluate-active' : star_icon == 2}">较差</text>
+              </div>
+            </button>
+            <button class="basics-button score-button" plain @click="handleScore(3)">
+              <text class="iconfont _icon-star" :class="{'_icon-star-active' : star_icon > 2}">&#xe611;</text>
+              <div class="score-evaluate">
+                <text class="score-evaluate-text" :class="{'score-evaluate-active' : star_icon == 3}">还行</text>
+              </div>
+            </button>
+            <button class="basics-button score-button" plain @click="handleScore(4)">
+              <text class="iconfont _icon-star" :class="{'_icon-star-active' : star_icon > 3}">&#xe611;</text>
+              <div class="score-evaluate">
+                <text class="score-evaluate-text" :class="{'score-evaluate-active' : star_icon == 4}">很好</text>
+              </div>
+            </button>
+            <button class="basics-button score-button" plain @click="handleScore(5)">
+              <text class="iconfont _icon-star" :class="{'_icon-star-active' : star_icon > 4}">&#xe611;</text>
+              <div class="score-evaluate">
+                <text class="score-evaluate-text" :class="{'score-evaluate-active' : star_icon == 5}">很赞</text>
+              </div>
+            </button>
+          </div>
+          <div class="content-bottom-ad">
+            <image
+mode="aspectFill"
+class="content-bottom-ad-image"
+                   src="https://media.hainanplus.cn/editimage/20201208/2788b082419b54d01d665a6bed485a6f.jpeg"
+/>
+          </div>
+        </div>
+      </plus-cell>
+      <plus-cell>
+        <div class="margin-top-xs  module-content padding-top-lg padding-bottom-lg">
+          <div class="page-module-title">相关推荐</div>
+          <div class="margin-top-lg flex-ad">
+            <scroll-view scroll-x="true">
+              <div class="flex-ad-list">
+                <div v-for="(ad,k) in ads" :key="k" class="flex-ad-item">
+                  <div class="flex-ad-item-image">
+                    <image mode="aspectFill" class="flex-ad-item-image-body" :src="ad.src" />
+                    <div class="small-content">
+                      <div class="iconfont">&#xe618;</div>
+                      <text class="small-content-text">
+                        05:28
+                      </text>
+                    </div>
+                  </div>
+                  <div class="margin-top-sm ad-item-title">
+                    <text class="ad-item-title-text">{{ ad.title }}</text>
+                  </div>
+                </div>
+              </div>
+            </scroll-view>
+          </div>
+        </div>
+        <div class="margin-top-xs  module-content padding-top-lg padding-bottom-lg">
+          <div class="page-single-ad">
+            <div class="page-single-ad-title">购全新2021款速派 立享终身免费保养</div>
+            <div class="margin-top-xs page-single-ad-image">
+              <image
+mode="aspectFill"
+class="basics-image page-single-ad-image-body"
+                     src="https://media.hainanplus.cn/editimage/20201208/2788b082419b54d01d665a6bed485a6f.jpeg"
+/>
+            </div>
+            <div class="margin-top-sm page-single-ad-explain">
+              <text class="page-single-ad-explain-text">广告</text>
+              <text class="margin-left-sm page-single-ad-explain-text">STA</text>
+            </div>
+          </div>
+        </div>
+      </plus-cell>
+
+      <plus-cell>
+        <div class="margin-top-xs  module-content padding-top-lg padding-bottom-lg">
+          <div class="page-module-title">相关车系</div>
+        </div>
+        <div class="margin-top-xs  module-content padding-top-lg padding-bottom-lg">
+          <div class="news-recommend">
+            <div class="news-recommend-list news-recommend-list-double">
+              <div class="news-recommend-list-title text-overflow-two text-bold text-lg">
+                <text class="news-recommend-list-title-text">性能堪比超跑的轿车 宝马M5</text>
+              </div>
+              <div class="news-recommend-list-double-image">
+                <image
+class="news-recommend-list-double-body"
+mode="aspectFill"
+                       src="https://media.hainanplus.cn/editimage/20201208/2788b082419b54d01d665a6bed485a6f.jpeg"
+/>
+                <image
+class="news-recommend-list-double-body"
+mode="aspectFill"
+                       src="https://media.hainanplus.cn/editimage/20201208/2788b082419b54d01d665a6bed485a6f.jpeg"
+/>
+                <image
+class="news-recommend-list-double-body"
+mode="aspectFill"
+                       src="https://media.hainanplus.cn/editimage/20201208/2788b082419b54d01d665a6bed485a6f.jpeg"
+/>
+              </div>
+              <div class="news-recommend-small-double">
+                <div class="news-recommend-user">
+                  <text class="news-recommend-small-text">
+                    502评论 / 海南plus xxx
+                  </text>
+                </div>
+                <div class="news-recommend-time">
+                  <text class="news-recommend-small-text">
+                    12-9
+                  </text>
+                </div>
+              </div>
+            </div>
+
+            <div class="news-recommend-list news-recommend-list-double">
+              <div class="news-recommend-list-title text-overflow-two text-bold text-lg">
+                <text class="news-recommend-list-title-text">性能堪比超跑的轿车 宝马M5性能堪比超跑的轿车 宝马M5性能堪比超跑的轿车 宝马M5</text>
+              </div>
+              <div class="news-recommend-list-double-image">
+                <image
+class="news-recommend-list-double-body"
+mode="aspectFill"
+                       src="https://media.hainanplus.cn/editimage/20201208/2788b082419b54d01d665a6bed485a6f.jpeg"
+/>
+                <image
+class="news-recommend-list-double-body"
+mode="aspectFill"
+                       src="https://media.hainanplus.cn/editimage/20201208/2788b082419b54d01d665a6bed485a6f.jpeg"
+/>
+                <image
+class="news-recommend-list-double-body"
+mode="aspectFill"
+                       src="https://media.hainanplus.cn/editimage/20201208/2788b082419b54d01d665a6bed485a6f.jpeg"
+/>
+              </div>
+              <div class="news-recommend-small-double">
+                <div class="news-recommend-user">
+                  <text class="news-recommend-small-text">
+                    413图片
+                  </text>
+                </div>
+
+                <div class="news-recommend-time">
+                  <text class="news-recommend-small-text">
+                    12-9
+                  </text>
+                </div>
+              </div>
+            </div>
+
+            <div class="news-recommend-list news-recommend-list-single">
+              <div class="news-recommend-list-single-div">
+                <div class="news-recommend-list-title text-overflow-two text-bold text-lg">
+                  <text class="news-recommend-list-title-text">性能堪比超跑的轿车 宝马M5性能堪比超跑的轿车 宝马M5性能堪比超跑的轿车 宝马M5</text>
+                </div>
+                <div class="news-recommend-small-single">
+                  <div class="news-recommend-user">
+                    <text class="news-recommend-small-text">
+                      413图片
+                    </text>
+                  </div>
+                  <div class="news-recommend-time">
+                    <text class="news-recommend-small-text">
+                      12-9
+                    </text>
+                  </div>
+                </div>
+              </div>
+              <div class="news-recommend-list-single-image">
+                <image
+class="news-recommend-list-single-body"
+mode="aspectFill"
+                       src="https://media.hainanplus.cn/editimage/20201208/2788b082419b54d01d665a6bed485a6f.jpeg"
+/>
+              </div>
+            </div>
+          </div>
+          <div class="margin-top load-more">
+            <button class="basics-button load-more-button" plain>
+              <text class="load-more-button-text">加载更多</text>
+            </button>
+          </div>
+        </div>
+      </plus-cell>
+      <plus-cell ref="comment">
+        <div class="margin-top-xs  module-content padding-top-lg padding-bottom-lg">
+          <div class="page-module-title">最新评论</div>
+          <div class="comment-list">
+            <div class="comment-list-item">
+              <div class="comment-list-item-header">
+                <image
+class="basics-image comment-list-item-header-image"
+                       src="https://media.hainanplus.cn/editimage/20201208/2788b082419b54d01d665a6bed485a6f.jpeg"
+/>
+              </div>
+              <div class="comment-list-item-flex-one">
+                <div class="comment-list-item-flex-name">
+                  <text class="comment-list-item-flex-name-body">然然的D</text>
+                </div>
+                <div class="comment-list-item-text">
+                  <text class="comment-list-item-text-body">我很高兴</text>
+                </div>
+                <div class="comment-list-item-time">
+                  <text class="comment-list-item-time-text">32分钟前</text>
+                  <button class="basics-button comment-list-item-time-button" plain>
+                    <text class="comment-list-item-time-button-text">回复</text>
+                  </button>
+                </div>
+                <button class="basics-button zan-button" plain>
+                  <text class="iconfont zan-button-text">&#xe63c;</text>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="comment-list">
+            <div class="comment-list-item">
+              <div class="comment-list-item-header">
+                <image
+class="basics-image comment-list-item-header-image"
+                       src="https://media.hainanplus.cn/editimage/20201208/2788b082419b54d01d665a6bed485a6f.jpeg"
+/>
+              </div>
+              <div class="comment-list-item-flex-one">
+                <div class="comment-list-item-flex-name">
+                  <text class="comment-list-item-flex-name-body">然然的D</text>
+                </div>
+                <div class="comment-list-item-text">
+                  <text class="comment-list-item-text-body">我很高兴</text>
+                </div>
+                <div class="comment-list-item-time">
+                  <text class="comment-list-item-time-text">32分钟前</text>
+                  <button class="basics-button comment-list-item-time-button" plain>
+                    <text class="comment-list-item-time-button-text">回复</text>
+                  </button>
+                </div>
+                <button class="basics-button zan-button" plain>
+                  <text class="iconfont zan-button-text">&#xe63c;</text>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="comment-list">
+            <div class="comment-list-item">
+              <div class="comment-list-item-header">
+                <image
+class="basics-image comment-list-item-header-image"
+                       src="https://media.hainanplus.cn/editimage/20201208/2788b082419b54d01d665a6bed485a6f.jpeg"
+/>
+              </div>
+              <div class="comment-list-item-flex-one">
+                <div class="comment-list-item-flex-name">
+                  <text class="comment-list-item-flex-name-body">然然的D</text>
+                </div>
+                <div class="comment-list-item-text">
+                  <text class="comment-list-item-text-body">我很高兴9</text>
+                </div>
+                <div class="comment-list-item-time">
+                  <text class="comment-list-item-time-text">32分钟前</text>
+                  <button class="basics-button comment-list-item-time-button" plain>
+                    <text class="comment-list-item-time-button-text">回复</text>
+                  </button>
+                </div>
+                <button class="basics-button zan-button" plain>
+                  <text class="iconfont zan-button-text">&#xe63c;</text>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </plus-cell>
+    </plus-list>
+
+    <div class="comment-bottom">
+      <div class="comment-bottom-content">
+        <div class="simulation-input" @click="comment">
+          <text class="iconfont">&#xe617;</text>
+          <text class="simulation-input-text">发表评评论...</text>
+        </div>
+        <div class="ad-pic">
+          <image
+mode="aspectFill"
+class="basics-image ad-pic-image"
+                 src="https://media.hainanplus.cn/editimage/20201208/2788b082419b54d01d665a6bed485a6f.jpeg"
+/>
+        </div>
+        <button class="basics-button" plain @click="toDom('comment')">
+          <text class="iconfont bottom-icon">&#xe787;</text>
+        </button>
+        <button class="basics-button" plain>
+          <text class="iconfont bottom-icon">&#xe616;</text>
+        </button>
+        <!--      #ifdef APP-PLUS -->
+        <button plain class="basics-button" style="font-size: 38rpx;" @click="share">
+          <text class="iconfont bottom-icon">&#xe62b;</text>
+        </button>
+        <!--      #endif -->
+        <!--      #ifdef MP-WEIXIN -->
+        <button plain class="basics-button" open-type="share" style="font-size: 38rpx;">
+          <text class="iconfont bottom-icon">&#xe62b;</text>
+        </button>
+        <!--      #endif -->
+      </div>
+      <div :style="{height: safeAreaBottom+'px'}" />
+    </div>
+    <div>
+      <div style="height: 120rpx;" />
+      <div :style="{height: safeAreaBottom+'px'}" />
+    </div>
+    <to-top-button :scroll-top="scrollTop" @toTop="toDom('detail')" />
+  </div>
+</template>
+
+<script>
+
+export default {
+  name: 'Index',
+  data() {
+    return {
+      id: 1,
+      detail: {
+        author_info: {},
+        content: ''
+      },
+      ads: [
+        {
+          src: 'https://media.hainanplus.cn/editimage/20201208/2788b082419b54d01d665a6bed485a6f.jpeg',
+          title: '4+X空间 带奥德赛车主体验五菱凯捷'
+        },
+        {
+          src: 'https://media.hainanplus.cn/editimage/20201208/2788b082419b54d01d665a6bed485a6f.jpeg',
+          title: '4+X空间 带奥德赛车主体验五菱凯捷'
+        },
+        {
+          src: 'https://media.hainanplus.cn/editimage/20201208/2788b082419b54d01d665a6bed485a6f.jpeg',
+          title: '4+X空间 带奥德赛车主体验五菱凯捷'
+        },
+        {
+          src: 'https://media.hainanplus.cn/editimage/20201208/2788b082419b54d01d665a6bed485a6f.jpeg',
+          title: '4+X空间 带奥德赛车主体验五菱凯捷'
+        },
+        {
+          src: 'https://media.hainanplus.cn/editimage/20201208/2788b082419b54d01d665a6bed485a6f.jpeg',
+          title: '4+X空间 带奥德赛车主体验五菱凯捷'
+        }
+      ],
+      star_icon: 0,
+      textareaTourHeight: 0,
+      syncData: false,
+      commentInputStatus: false,
+      shareButton: true,
+      shareContent: {},
+      toTopButton: false,
+      scrollTop: 0,
+      windowSafeBottom: 0,
+      windowHeight: 0,
+      safeAreaBottom: 0,
+      barTitleStatus: true,
+      getApp,
+      nodes: []
+    }
+  },
+  onload(option) {
+    this.id = option.id
+
+    // this.id = 1
+  },
+  onNavigationBarButtonTap(e) {
+	  switch (e.index) {
+		  case 0:
+		  this.showMore()
+		  break
+		  default:
+		  break
+	  }
+  },
+  onPageScroll(e) {
+    this.scrollTop = e.scrollTop
+    if (this.barTitleStatus && e.scrollTop > 588) {
+      this.barTitleStatus = false
+      uni.setNavigationBarTitle({
+        title: this.detail.title
+      })
+    } else if (!this.barTitleStatus && e.scrollTop < 588) {
+      this.barTitleStatus = true
+      uni.setNavigationBarTitle({
+        title: ' '
+      })
+    }
+  },
+  // #ifdef MP-WEIXIN
+  onShareAppMessage(res) {
+    // 微信小程序好友分享配置
+    if (res.from === 'button') { // 来自页面内分享按钮
+      console.log(res.target)
+    }
+    return {
+      title: this.shareContent.title,
+      desc: this.shareContent.summary,
+      imageUrl: this.detail.pic_path,
+      path: `/detail/news/index?id=${this.id}`
+    }
+  },
+  onShareTimeline(res) {
+    // 微信小程序朋友圈分享配置
+    if (res.from === 'button') { // 来自页面内分享按钮
+      console.log(res.target)
+    }
+    return {
+      title: this.shareContent.title,
+      desc: this.shareContent.summary,
+      imageUrl: this.detail.pic_path,
+      path: `/detail/news/index?id=${this.id}`
+    }
+  },
+  // #endif
+  mounted() {
+    // #ifdef APP-PLUS
+    this.getApp = getApp()
+    // #endif
+
+    // #ifndef APP-PLUS
+    this.getApp = this
+    // #endif
+
+    this.getData()
+  },
+  methods: {
+    // 跳转到对应的dom节点
+    toDom(i) {
+      console.log(this.$refs[i][0])
+      if (this.$refs[i]) {
+        const el = this.$refs[i][0]
+        dom && dom.scrollToElement(el, {})
+      }
+    },
+
+	  showMore() {
+		  const moreSubNVue = uni.getSubNVueById('more')
+      moreSubNVue.show('slide-in-bottom', 200)
+      uni.$once('close', (res) => {
+        moreSubNVue.hide('slide-out-bottom', 200)
+        if (res.url) {
+          setTimeout(() => {
+            uni.navigateTo({
+              url: res.url
+            })
+          }, 300)
+        }
+      })
+	  },
+
+    /**
+     * 分享
+     * */
+    share() {
+      this.shareContent = {
+        href: `https://m.hainanplus.cn/news/${this.id}`,
+        title: this.detail.wx_title || this.detail.title,
+        summary: this.detail.wx_description || this.detail.description,
+        imageUrl: this.detail.pic_path
+      }
+      if (!this.beAppStatic()) {
+        uni.shareWithSystem({
+          type: this.shareContent.imageUrl ? 'image' : 'text',
+          summary: this.shareContent.title,
+          href: this.shareContent.href,
+          imageUrl: this.shareContent.imageUrl					// uni文档标准仅支持本地路径,当前路径为线上地址,不确保是否会报错
+        })
+      } else {
+        const shareSubNVue = uni.getSubNVueById('share')
+
+        uni.$emit('share', this.shareContent)
+
+        shareSubNVue.show('slide-in-bottom', 300, function() {
+          // console.log('share')
+        })
+
+        uni.$once('close', (res) => {
+          if (res) {
+            shareSubNVue.hide('slide-out-bottom', 300, function() {
+              // console.log('share')
+            })
+          }
+        })
+      }
+    },
+
+    comment() {
+      console.log('SSS')
+      const systemInfo = uni.getSystemInfoSync()
+      const subNVue = uni.getSubNVueById('comment')
+      // subNVue.setStyle({
+      //   width: systemInfo.windowWidth + "px",
+      //   height : systemInfo.windowHeight + "px"
+      // })
+      subNVue.show('slide-in-bottom', 300, function() {
+        console.log(12123)
+      })
+    },
+
+    closeInput() {
+      uni.hideKeyboard()
+      this.commentInputStatus = !this.commentInputStatus
+    },
+
+    // #ifdef APP-PLUS
+    beAppStatic() {
+      if (plus.runtime.isApplicationExist({
+        pname: 'com.tencent.mm',
+        action: 'weixin://'
+      })) {
+        return true
+      } else {
+        return false
+      }
+    },
+    // #endif
+
+    send() {
+      this.commentInputStatus = false
+      console.log(this.comment)
+    },
+    input(e) {
+      // console.log(e)
+      this.comment = e.detail.value
+    },
+
+    linechange(e) {
+      console.log(e)
+    },
+
+    handleScore(i) {
+      this.star_icon = i
+    },
+
+    follow() {
+      console.log('follow')
+    },
+
+    getData() {
+      // #ifdef H5
+      // let url = `/www/api/news/getDetail`
+      // #endif
+
+      // #ifndef H5
+      // let url = `https://www.hainanplus.cn/api/news/getDetail`
+      // #endif
+      //
+      // console.log(url)
+      // let res = await this.getApp.util.request(url,{
+      //   id: this.id
+      // },'GET')
+      //
+      // if (res.code == 0) {
+      //   this.detail = res.data.detail
+      // } else {
+      //   this.getApp.util.showModal(res.msg)
+      // }
+
+      uni.request({
+        url: this.getApp.api.newsDetail,
+        data: {
+          id: this.id
+        },
+        success: (res) => {
+          if (res.data.code == 200) {
+            this.detail = res.data.data.detail
+          } else {
+            this.getApp.util.showModal(res.data.msg)
+          }
+        }
+      })
+    }
+  }
+}
+</script>
+<style scoped>
+
+.iconfont {
+  font-family: iconfont;
+}
+
+/*
+    设置按钮基础样式
+*/
+.basics-button {
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-right: 0;
+  padding-left: 0;
+  margin-top: 0;
+  margin-left: 0;
+  margin-right: 0;
+  margin-bottom: 0;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0;
+  line-height: 1;
+  border-width: 0;
+}
+
+.basics-button:after {
+  border-width: 0;
+}
+
+.module-content {
+  padding-left: 36rpx;
+  padding-right: 36rpx;
+  background-color: #ffffff;
+}
+
+.flex-div {
+  flex-direction: row;
+}
+
+.author-info {
+  /* #ifndef APP-PLUS */
+  display: flex;
+  /* #endif */
+  flex-direction: row;
+  align-items: center;
+  width: 678rpx;
+  /*justify-content: space-between;*/
+}
+
+.author-info-headimg {
+  flex: 0;
+  width: 68rpx;
+  height: 68rpx;
+}
+
+.author-info-headimg-image {
+  width: 68rpx;
+  height: 68rpx;
+  border-radius: 68rpx;
+}
+
+.author-info-detail {
+  flex: 1;
+  /* #ifndef APP-PLUS */
+  display: flex;
+  /* #endif */
+  flex-direction: column;
+  justify-content: space-between;
+  margin-left: 0rpx;
+}
+
+.author-info-detail-name {
+  flex-direction: row;
+  align-items: flex-end;
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #333333;
+}
+
+.author-info-detail-name-text {
+  font-size: 30rpx;
+  font-weight: 400;
+  color: #333333;
+}
+
+.author-info-detail-name-post {
+  font-size: 24rpx;
+  color: #999999;
+}
+
+.author-info-detail-num {
+  color: #999999;
+  font-size: 24rpx;
+}
+
+.follow-button {
+  /* #ifndef APP-PLUS */
+  display: flex;
+  /* #endif */
+  width: 116rpx;
+  height: 56rpx;
+  /* #ifdef APP-PLUS */
+  flex: 0;
+  /* #endif */
+  background-color: #019bff;
+  border-radius: 10rpx;
+  border-width: 0;
+}
+
+.follow-button-text {
+  font-size: 30rpx;
+  color: #ffffff;
+}
+
+.tab {
+  /* #ifndef APP-PLUS */
+  display: flex;
+  /* #endif */
+  flex-direction: row;
+  margin-bottom: 58rpx;
+}
+
+.tab-button {
+  height: 52rpx;
+  border-radius: 52rpx;
+  background-color: #f2f3f7;
+  padding-left: 24rpx;
+  padding-right: 24rpx;
+  margin-left: 24rpx;
+}
+
+.tab-button-text {
+  font-size: 22rpx;
+  color: #333333;
+}
+
+.tab-button:first-child {
+  margin-left: 0;
+}
+
+.tips {
+  flex-direction: row;
+  height: 52rpx;
+  background-color: rgb(248, 249, 253);
+  border-radius: 10rpx;
+}
+
+.tips-text {
+  line-height: 52rpx;
+  font-size: 24rpx;
+}
+
+.tips-text-color {
+  line-height: 52rpx;
+  font-size: 24rpx;
+  color: #019bff;
+}
+
+.score-title {
+  position: relative;
+  height: 26rpx;
+}
+
+.score-back{
+  height: 26rpx;
+}
+.score-line {
+  position: absolute;
+  top: 13rpx;
+  left: 201rpx;
+  width: 276rpx;
+  height: 1px;
+  background-color: #dedede;
+}
+
+.score-text {
+  position: absolute;
+  top: 0;
+  left: 226rpx;
+  background-color: #ffffff;
+  width: 226rpx;
+  height: 26rpx;
+  line-height: 26rpx;
+  text-align: center;
+}
+
+.score-text-body {
+  text-align: center;
+  font-size: 26rpx;
+  color: #666666;
+  padding: 0 9rpx;
+}
+
+.score {
+  /* #ifndef APP-PLUS */
+  display: flex;
+  /* #endif */
+  flex-direction: row;
+  justify-content: center;
+  margin-top: 30rpx;
+
+}
+
+.score-button {
+  /* #ifndef APP-PLUS */
+  display: flex;
+  /* #endif */
+  justify-content: space-between;
+  flex-direction: column;
+  margin-left: 20rpx;
+  color: #e4edf6;
+  line-height: 1;
+}
+
+.score-button:first-child {
+  margin-left: 0;
+}
+
+._icon-star {
+  color: #e4edf6;
+}
+
+._icon-star-active {
+  color: #f86807;
+}
+
+.score-evaluate {
+  margin-top: 14rpx;
+}
+
+.score-evaluate-active {
+  color: #f86807;
+}
+
+.score-evaluate-text {
+  font-size: 24rpx;
+}
+
+.content-bottom-ad {
+  width: 678rpx;
+  height: 126rpx;
+  margin-top: 50rpx;
+}
+
+.content-bottom-ad-image {
+  width: 678rpx;
+  height: 126rpx;
+  border-radius: 10rpx;
+}
+
+.page-module-title {
+  font-size: 38rpx;
+  font-weight: 700;
+}
+
+.flex-ad {
+  width: 750rpx;
+  padding: 0 36rpx;
+  margin-left: -36rpx;
+}
+
+.flex-ad-list {
+  /* #ifndef APP-PLUS */
+  display: flex;
+  /* #endif */
+  flex-direction: row;
+}
+
+.flex-ad-item {
+  width: 272rpx;
+  margin-left: 16rpx;
+  /* flex-shrink: 0; */
+
+}
+
+.flex-ad-item-image {
+  position: relative;
+  width: 272rpx;
+  height: 206rpx;
+  border-radius: 10rpx;
+}
+
+.flex-ad-item-image-body {
+  width: 272rpx;
+  height: 206rpx;
+  border-radius: 10rpx;
+}
+
+.small-content {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 272rpx;
+  height: 56rpx;
+  padding-right: 18rpx;
+  padding-left: 18rpx;
+}
+
+.small-content-text {
+  color: #ffffff;
+  font-size: 22rpx;
+  align-items: center;
+  text-align: right;
+  flex-direction: row-reverse;
+}
+
+.ad-item-title {
+  line-height: 1.5;
+  font-weight: 400;
+  margin-top: 20rpx;
+}
+
+.ad-item-title-text {
+  font-size: 26rpx;
+}
+
+.flex-ad-item:first-child {
+  margin-top: 0;
+}
+
+.flex-ad-item:last-child {
+  padding-right: 30rpx;
+}
+
+.page-single-ad {
+}
+
+.page-single-ad-title {
+  font-size: 32rpx;
+  font-weight: 700;
+}
+
+.page-single-ad-image {
+  width: 678rpx;
+  height: 358rpx;
+}
+
+.page-single-ad-image-body {
+  width: 678rpx;
+  height: 358rpx;
+  border-radius: 10rpx;
+}
+
+.page-single-ad-explain {
+  flex-direction: row;
+}
+
+.page-single-ad-explain-text {
+  font-size: 24rpx;
+  color: #999999;
+}
+
+.news-recommend {
+}
+
+.news-recommend-list-double {
+  padding-top: 30rpx;
+  padding-bottom: 20rpx;
+  padding: 30rpx 0 20rpx;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-bottom-color: #dedede
+}
+
+.news-recommend-list-title {
+
+}
+
+.news-recommend-list-title-text {
+  font-weight: 700;
+  font-size: 32rpx;
+  text-overflow: ellipsis;
+  lines: 2;
+}
+
+.news-recommend-list-double-image {
+  /* #ifndef APP-PLUS */
+  display: flex;
+  /* #endif */
+  flex-direction: row;
+  justify-content: space-between;
+  border-radius: 10rpx;
+  overflow: hidden;
+  margin-top: 16rpx;
+}
+
+.news-recommend-list-double-body {
+  width: 224rpx;
+  height: 172rpx;
+}
+
+.news-recommend-small-double {
+  /* #ifndef APP-PLUS */
+  display: flex;
+  /* #endif */
+  flex-direction: row;
+  justify-content: space-between;
+  font-weight: 400;
+  margin-top: 24rpx;
+}
+
+.news-recommend-small-text {
+  font-size: 24rpx;
+  color: #999999;
+}
+
+.news-recommend-list-single {
+  /* #ifndef APP-PLUS */
+  display: flex;
+  /* #endif */
+  flex-direction: row;
+  justify-content: space-between;
+  padding-top: 30rpx;
+  padding-bottom: 20rpx;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-bottom-color: #dedede
+}
+
+.news-recommend-list-single-div {
+  flex: 1;
+}
+
+.news-recommend-list-single-image {
+  flex: 0;
+  width: 224rpx;
+  height: 170rpx;
+  /* flex-shrink: 0; */
+  margin-left: 20rpx;
+}
+
+.news-recommend-list-single-body {
+  width: 224rpx;
+  height: 170rpx;
+  border-radius: 10rpx;
+}
+
+.news-recommend-small-single {
+  /* #ifndef APP-PLUS */
+  display: flex;
+  /* #endif */
+  flex-direction: row;
+  justify-content: space-between;
+  font-weight: 400;
+  height: 30rpx;
+  margin-top: 36rpx;
+}
+
+.comment-bottom {
+  position: fixed;
+  bottom: 0;
+  width: 750rpx;
+  background-color: #ffffff;
+
+}
+
+.comment-bottom-content {
+  /* #ifndef APP-PLUS */
+  display: flex;
+  /* #endif */
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18rpx 36rpx;
+  /* #ifdef H5 */
+  width: 678rpx;
+  /* #endif */
+
+  /* #ifndef H5 */
+  width: 750rpx;
+  /* #endif */
+  height: 120rpx;
+}
+
+.simulation-input {
+  position: relative;
+  /* #ifndef APP-PLUS */
+  display: flex;
+  /* #endif */
+  flex-direction: row;
+  align-items: center;
+  width: 320rpx;
+  height: 64rpx;
+  padding: 0 16rpx;
+  background-color: #f8f9fd;
+  border-radius: 10rpx;
+}
+
+.simulation-input-text {
+  color: #000012;
+  font-size: 26rpx;
+}
+
+.icon-icon-checkin {
+  font-size: 40rpx;
+  margin-right: 16rpx;
+  color: #999999;
+}
+
+.ad-pic {
+  width: 64rpx;
+  height: 64rpx;
+}
+
+.ad-pic-image {
+  width: 64rpx;
+  height: 64rpx;
+}
+
+.bottom-icon {
+  color: #999999;
+  font-weight: 400;
+  font-size: 46rpx;
+}
+
+.load-more {
+  /* #ifndef APP-PLUS */
+  display: flex;
+  /* #endif */
+  flex-direction: row;
+  justify-content: center;
+}
+
+.load-more-button {
+  width: 298rpx;
+  height: 80rpx;
+  border-radius: 10rpx;
+  background-color: #f8f9fd;
+}
+
+.load-more-button-text {
+  font-size: 26rpx;
+  color: #333333;
+}
+
+.comment-list {
+  margin-top: 48rpx;
+}
+
+.comment-list-item {
+  position: relative;
+  /* #ifndef APP-PLUS */
+  display: flex;
+  /* #endif */
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.comment-list-item-header {
+  width: 60rpx;
+  height: 60rpx;
+  margin-right: 14rpx;
+  flex: 0;
+  flex-direction: row;
+}
+
+.comment-list-item-header-image {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 60rpx;
+}
+
+.comment-list-item-flex-one {
+  flex: 1;
+  padding-bottom: 30rpx;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-bottom-color: #dedede;
+
+}
+
+.comment-list-item-flex-name {
+  padding-top: 20rpx;
+  padding-bottom: 16rpx;
+}
+
+.comment-list-item-flex-name-body {
+  font-weight: 700;
+  font-size: 26rpx;
+  line-height: 26rpx;
+}
+
+.comment-list-item-text {
+  margin-top: 12rpx;
+  height: 45rpx;
+  line-height: 1.5;
+}
+
+.comment-list-item-text-body {
+  height: 45rpx;
+  font-size: 30rpx;
+}
+
+.comment-list-item-time {
+  margin-top: 16rpx;
+  /* #ifndef APP-PLUS */
+  display: flex;
+  /* #endif */
+  flex-direction: row;
+  align-items: center;
+}
+
+.comment-list-item-time-text {
+  color: #999999;
+  font-size: 24rpx;
+}
+
+.comment-list-item-time-button {
+  margin-left: 30rpx;
+}
+
+.comment-list-item-time-button-text {
+  color: #666666;
+  font-size: 24rpx;
+}
+
+.zan-button {
+  position: absolute;
+  top: 6rpx;
+  right: 20rpx;
+}
+
+.zan-button-text {
+  font-size: 32rpx;
+}
+
+</style>

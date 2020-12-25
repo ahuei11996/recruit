@@ -1,0 +1,155 @@
+<template>
+  <div>
+    <div class="more" @click.stop="stopDom">
+      <div class="padding-right-lg padding-left-lg ">
+        <div class="button-list" @click="toPage('/detail/news/author')">
+          <text class="text-df text-black">作者主页</text>
+          <text class="iconfont text-df text-gray">&#xe699;</text>
+        </div>
+        <div class="button-list" @click="getApp.util.navTo('/detail/report/index')">
+          <text class="text-df text-black">举报</text>
+          <text class="iconfont text-df text-gray">&#xe699;</text>
+        </div>
+        <div class="button-list" @click="night_mode">
+          <text class="text-df text-black">夜间模式</text>
+          <div>
+            <switch :checked="checked" @change="switch1Change" />
+          </div>
+        </div>
+        <div class="button-list" style="border-bottom-width: 0;">
+          <text class="text-df text-black">字号大小</text>
+          <div class="font-size-list">
+            <button class="basics-button font-sm font-size-button" plain @click="fontSize = 0">
+              <text class="text-df text-black" :class="{'font-size-button-active':fontSize == 0}">小</text>
+            </button>
+            <button class="basics-button font-sm font-size-button" plain @click="fontSize = 1">
+              <text class="text-df text-black" :class="{'font-size-button-active':fontSize == 1}">中</text>
+            </button>
+            <button class="basics-button font-sm font-size-button" plain @click="fontSize = 2">
+              <text class="text-df text-black" :class="{'font-size-button-active':fontSize == 2}">大</text>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="division" />
+      <div class="">
+        <button class="padding-right-sm padding-left-sm basics-button button-list close-button" style="justify-content: center;border-bottom-width: 0;" plain @click="close">
+          <text class="text-df text-gray">取消</text>
+        </button>
+      </div>
+    </div>
+    <plus-safe-area-bottom />
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'More',
+  data() {
+    return {
+      getApp,
+      checked: false,
+      fontSize: 0
+    }
+  },
+  mounted() {
+    this.getApp = getApp()
+
+    // #ifdef APP-PLUS
+    const domModule = weex.requireModule('dom')
+    domModule.addRule('fontFace', {
+      'fontFamily': 'iconfont',
+      'src': "url('https://at.alicdn.com/t/font_2245848_c5lsgl1ptm.ttf')"
+    })
+    //  #endif
+  },
+  methods: {
+    toPage(url) {
+      uni.$emit('close', { url })
+    },
+
+    night_mode() {
+      console.log('night mode')
+    },
+
+    switch1Change() {
+      this.checked = !this.checked
+    },
+
+    close() {
+      uni.$emit('close', true)
+    },
+
+    stopDom() {
+      return ''
+    }
+  }
+}
+</script>
+
+<style lang="scss">
+
+.iconfont{
+  font-family: iconfont;
+}
+
+.basics-button{
+  border-width: 0;
+  border-radius: 0;
+}
+
+.button-list {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  height: 96rpx;
+  line-height: 96rpx;
+
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-bottom-color: #dedede;
+}
+
+.font-size-button {
+  width: 56rpx;
+  margin-left: 20rpx;
+}
+.font-size-button:first-child{
+  margin-left: 0;
+}
+.more {
+  position: fixed;
+  bottom: 0;
+  width: 750rpx;
+  background-color: #ffffff;
+}
+
+.font-size-list{
+  flex-direction: row;
+}
+
+.division{
+  height: 10rpx;
+  background-color: #dedede;
+}
+
+.close-button{
+  //border-top-width: 10rpx;
+  //border-top-style: solid;
+  //border-top-color: #dedede;
+}
+
+.font-size-button-active{
+  color: #ffffff;
+  width: 56rpx;
+  height: 56rpx;
+  line-height: 56rpx;
+  border-radius: 50%;
+  background-color: #019bff;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+</style>
