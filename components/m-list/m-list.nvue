@@ -1,0 +1,25 @@
+<template>
+	<!-- #ifdef APP-PLUS -->
+	<list class="m-list">
+		<slot></slot>
+	</list>
+	<!-- #endif -->
+
+	<!-- #ifndef APP-PLUS -->
+	<view class="m-list">
+		<slot></slot>
+	</view>
+	<!-- #endif -->
+</template>
+
+<script>
+	export default {
+
+	}
+</script>
+
+<style>
+.m-list{
+	
+}
+</style>

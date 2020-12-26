@@ -1,0 +1,341 @@
+<!--
+  Maintainer: Magiclock
+  create_time: 2020/12/06
+-->
+<template>
+  <view class="loginByPhoneBox" @click.self="uni.hideKeyboard()">
+    <view class="backgroundColor" />
+    <view>
+      <view class="login">
+        <view class="title">
+          <text class="text1">{{ text[type][0] }}</text>
+          <text class="text2">{{ text[type][1] }}</text>
+        </view>
+        <u-form class="form">
+          <u-form-item>
+            <view class="group">
+              <u-input v-model="phone" adjust-position="false" class="input" type="number" placeholder="请输入手机号" maxlength="11" @focus="onFocus" @blur="onBlur" @input="setPhone" @confirm="enter" />
+              <button :disabled="disAble" class="getCode" @click="getCode">{{ num }}</button>
+            </view>
+          </u-form-item>
+          <u-form-item>
+            <view class="group">
+              <u-input
+                v-model="code"
+                adjust-position="false"
+                class="input"
+                :focus="isFocus"
+                type="number"
+                placeholder="请输入验证码"
+                maxlength="6"
+                @focus="onFocus"
+                @blur="onBlur"
+                @input="setCode"
+                @confirm="enter"
+              />
+              <text class="getCode" />
+            </view>
+          </u-form-item>
+        </u-form>
+        <view v-if="type==0" class="protocol">
+          <u-checkbox v-model="isRead" class="checkBox" size="34rpx" label-size="24rpx" shape="circle" @change="radioChange">
+            <text>我已阅读并同意</text>
+          </u-checkbox>
+          <navigator url="/detail/agreement/system" class="xieyi" hover-class="none" style="font-size:24rpx;line-height:1.8">《系统用户隐私协议》</navigator>
+        </view>
+        <u-button :loading="isLoading" :disabled="isCanLogin" class="loginBtn" type="primary" hover-class="none" @click="toLogin">立即{{ text[type][2] }}</u-button>
+        <u-top-tips ref="uTips" />
+      </view>
+    </view>
+    <view v-if="type==0" v-show="showTitle" class="bottom">
+      <thirdParty />
+    </view>
+  </view>
+</template>
+
+<script>
+
+export default {
+  name: 'LoginByPhone',
+  data() {
+    return {
+      type: 0,
+      phone: '18410706601',
+      code: '010101',
+      disAble: false,
+      isFocus: false,
+      num: '获取验证码',
+      isCanLogin: true,
+      text: [
+        ['手机快捷登录', '未注册过的手机号将自动创建账号', '登录'],
+        ['绑定手机号', '手机号将绑定您的微信账号', '绑定']
+      ],
+      isLoading: false,
+      // login额外参数
+      showTitle: true,
+      isRead: false
+    }
+  },
+  onLoad(e) {
+    this.type = e.type
+  },
+  methods: {
+    onFocus() {
+      this.showTitle = false
+    },
+    onBlur() {
+      uni.onKeyboardHeightChange(e => {
+        if (e.height == 0) {
+          this.showTitle = true
+        }
+      })
+      this.isFocus = false
+    },
+    // 输入手机号
+    setPhone(e) {
+      this.phone = e
+      this.setLoginStatus()
+    },
+    // 输入验证码
+    setCode(e) {
+      this.code = e
+    },
+    // 是否可以获取验证码
+    canGetCode() {
+      const isTrue = this.test.mobile(this.phone)
+      if (this.phone == '') {
+        this.$refs.uTips.show({
+          title: '请输入手机号',
+          type: 'warning',
+          duration: '2300'
+        })
+        return false
+      } else if (!isTrue) {
+        this.$refs.uTips.show({
+          title: '手机号码不正确',
+          type: 'error',
+          duration: '2300'
+        })
+        return false
+      } else {
+        return true
+      }
+    },
+    // 获取验证码
+    getCode() {
+      const is = this.canGetCode()
+      let event
+      if (this.type == 0) {
+        event = 'login'
+      } else if (this.type == 1) {
+        event = 'bind'
+      }
+      if (is) {
+        let time = 60
+        const that = this
+        this.disAble = true
+        this.isFocus = true
+        this.num = '60秒后重新发送'
+        let timer = setInterval(function() {
+          time--
+          that.num = time + '秒后重新获取'
+          if (time < 1) {
+            that.num = '重新获取验证码'
+            that.disAble = false
+            clearInterval(timer)
+            timer = null
+          }
+        }, 1000)
+        console.log(event)
+        this.util.request(this.api.captcha, {
+          mobile: this.phone,
+          event: event
+        }).then((res) => {
+          console.log(res)
+          if (res.code == 200) {
+            this.$refs.uTips.show({
+              title: res.msg,
+              type: 'success',
+              duration: '2300'
+            })
+          }
+        })
+      }
+    },
+    // 登录
+    toLogin() {
+      if (this.code.length == 0) {
+        this.$refs.uTips.show({
+          title: '请输入验证码',
+          type: 'info',
+          duration: '2300'
+        })
+      } else {
+        let url
+        this.isCanLogin = false
+        this.isLoading = true
+
+        if (this.type == 0) {
+          url = this.api.mobileLogin
+        } else if (this.type == 1) {
+          url = this.api.bindmobile
+        }
+        // console.log(url)
+        // console.log(this.code)
+        this.util.request(url, {
+          mobile: this.phone,
+          captcha: this.code
+        }).then((res) => {
+          // console.log(res)
+          if (res.code == 200) {
+            const userInfo = res.data
+            this.$store.commit('login', userInfo)
+            // uni.setStorage({// 缓存用户信息
+            //   key: 'userInfo',
+            //   data: userInfo
+            // })
+            // uni.setStorage({// 缓存token
+            //   key: 'token',
+            //   data: userInfo.token
+            // })
+            uni.switchTab({
+              url: '/pages/user/mine'
+            })
+          } else {
+            if (res.msg) {
+              uni.showModal({
+                content: res.msg,
+                showCancel: false
+              })
+            }
+          }
+
+          this.code = ''
+          this.isLoading = false
+          this.setLoginStatus()
+        })
+      }
+    },
+    // 回车事件
+    enter() {
+      const is = this.canGetCode()
+      if (this.type == 0) { // 判断是否登录页
+        if (!this.isRead) {
+          this.$refs.uTips.show({
+            title: '请勾选协议',
+            type: 'warning',
+            duration: '2300'
+          })
+          return
+        }
+      }
+      if (is) {
+        this.login()
+      }
+    },
+    // 登录按钮是否禁用
+    setLoginStatus() {
+      if (this.type == 0) {
+        if (!this.isRead) {
+          this.isCanLogin = true
+          return
+        }
+      }
+      if (this.phone.length == 11) {
+        this.isCanLogin = false
+      } else {
+        this.isCanLogin = true
+      }
+    },
+
+    // 是否同意条款
+    radioChange(e) {
+      this.isRead = e.value
+      this.setLoginStatus()
+    }
+  }
+}
+</script>
+
+<style scoped>
+.backgroundColor{
+  position:fixed;
+  top:0;
+  bottom:0;
+  left:0;
+  right:0;
+  background:#fff;
+  z-index:-1;
+}
+.loginByPhoneBox{
+  display:flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.login{
+  display:flex;
+  flex-direction: column;
+  padding:0 60rpx;
+}
+.title{
+  padding-top:60rpx;
+  display: flex;
+  flex-direction:column;
+}
+.text1{
+  font-size:42rpx;
+  color:#0d0d0d;
+}
+.text2{
+  font-size:22rpx;
+  color:#8c8c8c;
+  margin-top:35rpx;
+}
+.form{
+  margin-top:50rpx;
+}
+.input{
+  width:70%;
+  font-size:26rpx;
+}
+.getCode{
+  width:200rpx;
+  background:none !important;
+  outline:none;
+  border:none;
+  font-size:26rpx;
+  color:#999999;
+  margin:0;
+  padding:0;
+  height:64rpx;
+  margin-left:20rpx;
+  text-align: right;
+}
+.getCode:after{
+  border:none;
+}
+.loginBtn{
+  width:100%;
+  margin-top:60rpx;
+  height:96rpx;
+}
+.bottom{
+  position:absolute;
+  left:0;
+  bottom:0;
+  width:100%;
+}
+.protocol{
+  margin-top:45rpx;
+  color:#c9c9c9;
+}
+.xieyi {
+  display:inline-block;
+  text-decoration: underline;
+}
+.group{
+  display:flex;
+  width:630rpx;
+}
+
+</style>

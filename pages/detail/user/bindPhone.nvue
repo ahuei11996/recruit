@@ -1,0 +1,246 @@
+<!--
+  Maintainer: Magiclock
+  create_time: 2020/12/06
+-->
+<template>
+  <view class="loginByPhoneBox" @click.self="uni.hideKeyboard()">
+    <view class="backgroundColor" />
+    <view>
+      <view class="login">
+        <view class="title">
+          <text class="text1">绑定手机号</text>
+          <text class="text2">手机号将绑定您的微信账号</text>
+        </view>
+        <u-form class="form">
+          <u-form-item>
+            <view class="group">
+              <u-input v-model="phone" adjust-position="false" class="input" type="number" placeholder="请输入手机号" maxlength="11" @blur="onBlur" @input="setPhone" @confirm="up" />
+              <button :disabled="disAble" class="getCode" @tap="getCode">{{ num }}</button>
+            </view>
+          </u-form-item>
+          <u-form-item>
+            <view class="group">
+              <u-input v-model="code" adjust-position="false" class="input" :focus="isFocus" type="number" placeholder="请输入验证码" maxlength="6" @blur="onBlur" @input="setCode" @confirm="up" />
+              <text class="getCode" />
+            </view>
+          </u-form-item>
+        </u-form>
+        <u-button :disabled="isCanLogin" class="loginBtn" type="primary" hover-class="none" @click="login">立即绑定</u-button>
+        <u-toast ref="uToast" />
+      </view>
+    </view>
+  </view>
+</template>
+<script>
+export default {
+  name: 'LoginByPhone',
+  data() {
+    return {
+      phone: '18410706601',
+      code: '010101',
+      disAble: false,
+      isFocus: false,
+      num: '获取验证码',
+      isCanLogin: true
+    }
+  },
+  onLoad(e) {
+
+  },
+  methods: {
+    onBlur() {
+      this.isFocus = false
+    },
+    // 输入手机号
+    setPhone(e) {
+      this.phone = e
+      this.setLoginStatus()
+    },
+    // 输入验证码
+    setCode(e) {
+      this.code = e
+    },
+    // 是否可以获取验证码
+    canGetCode() {
+      const isTrue = this.test.mobile(this.phone)
+      if (this.phone == '') {
+        this.$refs.uToast.show({
+          title: '请输入手机号',
+          type: 'warning',
+          icon: true,
+          position: 'bottom'
+        })
+        return false
+      } else if (!isTrue) {
+        this.$refs.uToast.show({
+          title: '手机号码不正确',
+          type: 'error',
+          icon: true,
+          position: 'bottom'
+        })
+        return false
+      } else {
+        return true
+      }
+    },
+    up() {
+      const is = this.canGetCode()
+      if (is) {
+        this.login()
+      }
+    },
+    // 绑定按钮是否禁用
+    setLoginStatus() {
+      console.log(this.phone.length)
+      if (this.phone.length == 11) {
+        this.isCanLogin = false
+      } else {
+        this.isCanLogin = true
+      }
+    },
+    // 获取验证码
+    getCode() {
+      const is = this.canGetCode()
+      if (is) {
+        let time = 5
+        this.disAble = true
+        this.isFocus = true
+        this.num = '60秒后重新发送'
+        const that = this
+        this.$refs.uToast.show({
+          title: '验证码已发送',
+          type: 'info',
+          icon: true,
+          position: 'bottom'
+        })
+        this.util.request(this.api.captcha, {
+          mobile: this.phone,
+          event: 'login'
+        }, 'GET').then((res) => {
+          console.log(res)
+          if (res.code == 200) {
+            this.$refs.uToast.show({
+              title: res.msg,
+              type: 'success',
+              icon: true,
+              position: 'bottom'
+            })
+          }
+        })
+        let timer = setInterval(function() {
+          time--
+          that.num = time + '秒后重新获取'
+          if (time < 1) {
+            that.num = '重新获取验证码'
+            that.disAble = false
+            clearInterval(timer)
+            timer = null
+          }
+        }, 1000)
+      }
+    },
+    // 绑定
+    login() {
+      this.isCanLogin = false
+      console.log(uni.getStorageSync('clientId'))
+      uni.showLoading()
+      this.util.request(this.api.bindmobile, {
+        mobile: this.phone,
+        captcha: this.code
+      }).then((res) => {
+        console.log(res)
+        if (res.code == 200) {
+          console.log(uni.getStorageSync('token'))
+          const info = res.data
+          uni.setStorage({// 缓存用户信息
+            key: 'userInfo',
+            data: info
+          })
+          uni.setStorage({// 缓存用户信息
+            key: 'token',
+            data: info.token
+          })
+          // #ifdef H5
+          uni.redirectTo({
+            url: '/pages/user/mine'
+          })
+          // #endif
+          uni.switchTab({
+            url: '/pages/user/mine'
+          })
+        }
+        this.isCanLogin = true
+        uni.hideLoading()
+      })
+    }
+  }
+}
+</script>
+
+<style scoped>
+.backgroundColor{
+  position:fixed;
+  top:0;
+  bottom:0;
+  left:0;
+  right:0;
+  background:#fff;
+  z-index:-1;
+}
+.loginByPhoneBox{
+  display:flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.login{
+  display:flex;
+  flex-direction: column;
+  padding:0 60rpx;
+}
+.title{
+  padding-top:60rpx;
+  display: flex;
+  flex-direction:column;
+}
+.text1{
+  font-size:42rpx;
+  color:#0d0d0d;
+}
+.text2{
+  font-size:22rpx;
+  color:#8c8c8c;
+  margin-top:35rpx;
+}
+.form{
+  margin-top:50rpx;
+}
+.input{
+  width:70%;
+  font-size:26rpx;
+}
+.getCode{
+  width:200rpx;
+  background:none !important;
+  outline:none;
+  border:none;
+  font-size:26rpx;
+  color:#999999;
+  margin:0;
+  padding:0;
+  height:64rpx;
+  margin-left:20rpx;
+  text-align: right;
+}
+.getCode:after{
+  border:none;
+}
+.loginBtn{
+  width:100%;
+  margin-top:60rpx;
+  height:96rpx;
+}
+.group{
+  display:flex;
+  width:630rpx;
+}
+</style>

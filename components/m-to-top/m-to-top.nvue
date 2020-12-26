@@ -1,0 +1,88 @@
+<template>
+	<view>
+		<view v-if="scrollTop > showTop" class="topButton">
+			<slot>
+				<button class="basics-button topButton-button" plain @click.stop="toTop($event)">
+					<text class="iconfont topButton-button-text">&#xe632;</text>
+				</button>
+			</slot>
+		</view>
+	</view>
+</template>
+
+<script>
+	export default {
+		name: 'ToTopButton',
+		props: {
+			scrollTop: {
+				type: Number,
+				default: 0
+			},
+			showTop: {
+				type: Number,
+				default: 200
+			},
+			setRef: {
+				type: String,
+				default: ''
+			}
+		},
+		methods: {
+			toTop(e) {
+				// #ifndef APP-PLUS-NVUE
+				uni.pageScrollTo({
+					scrollTop: 0,
+					duration: 200
+				})
+				//  #endif
+
+				//  #ifdef APP-PLUS-NVUE
+				e.stopPropagation()
+				this.$emit('toTop')
+				//  #endif
+			}
+		}
+	}
+</script>
+<style lang="scss" scoped>
+	$icon-size: 80rpx;
+
+	.iconfont {
+		font-family: iconfont;
+	}
+
+	/*
+    设置按钮基础样式
+*/
+	.basics-button {
+		border-width: 0;
+	}
+
+	.topButton {
+		position: fixed;
+		bottom: 126rpx;
+		right: 40rpx;
+		// #ifndef APP-PLUS-NVUE
+		display: flex;
+		// #endif
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
+		width: $icon-size;
+		height: $icon-size;
+		border-radius: $icon-size;
+		background-color: rgba(255, 255, 255, 0.68);
+		box-shadow: 0 4rpx 16rpx 0 rgba(0, 0, 0, 0.28);
+	}
+
+	.topButton-button {
+		width: $icon-size;
+		height: $icon-size;
+	}
+
+	.topButton-button-text {
+		font-size: 48rpx;
+		//line-height: 1;
+		color: #666666;
+	}
+</style>

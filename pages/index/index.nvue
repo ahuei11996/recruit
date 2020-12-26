@@ -1,0 +1,59 @@
+<!--
+  Author: Magiclock
+  create_time: 2020/12/25  
+  performance: no
+-->
+<template>
+	<view class="container">
+		<button @click="toPage('/pages/chat/message')">聊天</button>
+		<m-list >
+			<m-cell :ref="`list${index}`" v-for="(item,index) in 30" :key="index">
+				<view>
+				这是第{{index+1}}条
+				</view>
+				<view>
+					app端nvue专用组件。在app-nvue下，如果是长列表，使用list组件的性能高于使用view或scroll-view的滚动。原因在于list在不可见部分的渲染资源回收有特殊的优化处理。
+原生渲染的资源回收机制，与webview渲染不同。webview不需要数据有规则格式，长页面处于不可视的部分，其渲染资源会自动回收，除非webview使用区域滚动而不是页面滚动。所以vue页面只要不用scroll-view，就不需要关注这个问题。而原生渲染则必须注意。
+				</view>
+			</m-cell>
+		</m-list>
+		aksdjfalsd;lf
+		<!-- <m-to-top :scrollTop="scrollTop">asdfasfasdf</m-to-top> -->
+	</view>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				title: 'Index',
+				data(){
+					return {
+						scrollTop: 0,
+						getApp,
+					}
+				}
+			}
+		},
+		onLoad() {
+		},
+		onPageScroll(e){
+			this.scrollTop = e.scrollTop
+		},
+		methods: {
+				toPage(url){
+					uni.navigateTo({
+						url
+					})
+				}
+		},
+		mounted() {
+			this.getApp = getApp({allowDefault: true})
+			// console.log(this.getApp)
+		}
+	}
+</script>
+
+<style>
+	
+</style>

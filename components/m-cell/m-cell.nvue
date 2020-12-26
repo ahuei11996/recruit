@@ -1,0 +1,25 @@
+<template>
+	<!-- #ifdef APP-PLUS -->
+	<cell class="m-cell">
+		<slot></slot>
+	</cell>
+	<!-- #endif -->
+
+	<!-- #ifndef APP-PLUS -->
+	<view class="m-cell">
+		<slot></slot>
+	</view>
+	<!-- #endif -->
+</template>
+
+<script>
+	export default {
+
+	}
+</script>
+
+<style>
+.m-cell{
+	
+}
+</style>

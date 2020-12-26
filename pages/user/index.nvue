@@ -1,0 +1,299 @@
+<!--
+  Maintainer: Magiclock
+  create_time: 2020/12/06
+-->
+<template>
+  <view class="box">
+    <view class="bgColor" />
+    <u-toast ref="uToast" />
+    <view class="title">
+      <view class="info">
+        <view>
+          <text class="userName">Hi,</text>
+          <text class="userName text" :style="{color:isLogin?'#333':'#0541B4'}" @click="toNewPage('/set/setting')">{{ userInfo.name }}</text>
+          <text class="welcome">欢迎来到海南plus</text>
+        </view>
+        <view class="avatar" @click="toNewPage('/set/setting')">
+          <image :src="userInfo.headimg" class="avatarImg" />
+          <view class="setAvatar">
+            <text class="iconfont">&#xe600;</text>
+          </view>
+        </view>
+      </view>
+      <view class="msg">
+        <view v-for="(val,key) in msg" :key="key" class="group" @click="toNewPage(val.url)">
+          <text class="msgData">{{ val.data }}</text>
+          <text class="msgName">{{ val.name }}</text>
+        </view>
+      </view>
+    </view>
+    <view class="content">
+      <view class="item item1">
+        <view class="itemContent">
+          <view v-for="(val,key) in itemGroup" :key="key" class="itemGroup" @click="toNewPage(val.url)">
+            <image :src="util.getImage(val.icon)" mode="aspectFit" class="iconImg" />
+            <text class="mineGroupText">{{ val.name }}</text>
+          </view>
+        </view>
+      </view>
+      <view class="item">
+        <view v-for="(val,key) in itemList" :key="key" class="itemList" @click="toNewPage(val.url)">
+          <view>
+            <text class="iconfont" :class="val.icon" />
+            <text class="listName">{{ val.name }}</text>
+          </view>
+          <text class="iconfont back">&#xe870;</text>
+        </view>
+      </view>
+      <view class="item">
+        <navigator hover-class="none" class="itemList" url="/detail/agreement/eula">
+          <view>
+            <text class="iconfont">&#xe615;</text>
+            <text class="listName">隐私条例</text>
+          </view>
+          <text class="iconfont back">&#xe870;</text>
+        </navigator>
+        <view v-show="isLogin">
+          <view class="itemList" @click="logout()">
+            <view>
+              <text class="iconfont" style="font-size:26rpx">&#xe608;</text>
+              <text class="listName">退出登录</text>
+            </view>
+            <text />
+          </view>
+        </view>
+      </view>
+    </view>
+    <view v-if="isIos" style="height:70px" />
+  </view>
+</template>
+
+<script>
+export default {
+  name: 'Mine',
+  data() {
+    return {
+      height: '',
+      avatarImg: '',
+      url: '/pages',
+      client: '/loginByPhone?type=0',
+      isIos: false,
+      msg: [
+        { name: '关注', data: 0, url: '' },
+        { name: '粉丝', data: 0, url: '' },
+        { name: '获赞', data: 0, url: '' },
+        { name: '消息', data: 0, url: '' }
+      ],
+      itemGroup: [
+        { name: '我的关注', icon: '/guanzhu22.png', url: '' },
+        { name: '浏览记录', icon: '/liuylan.png', url: '' },
+        { name: '消息中心', icon: '/xinxdeixiaoxi.png', url: '' },
+        { name: '收藏记录', icon: '/shoucangjilune.png', url: '' }
+      ],
+      itemList: [
+        { name: '寻求报道', icon: 'icon-meitibaodao', url: '' },
+        { name: '意见反馈', icon: 'icon-yijianfankui1', url: '' }
+      ]
+    }
+  },
+  onShow() {
+    this.getUserInfo()
+    this.getHeight()
+    // #ifdef MP
+    this.client = '/login'
+    // #endif
+    const system = uni.getSystemInfoSync().platform
+    if (system == 'ios') {
+      this.isIos = true
+    }
+  },
+  computed: {
+    userInfo() {
+      return this.$store.state.userInfo
+    },
+    isLogin() {
+      return this.$store.state.hasLogin
+    }
+  },
+  methods: {
+    // 跳转
+    toNewPage(page) {
+      this.util.navTo(this.url + (this.isLogin ? page : '/user' + this.client))
+    },
+    // 获取个人信息
+    getUserInfo() {
+      if (this.$store.state.token) {
+        let userInfo = this.$store.state.userInfo
+        console.log(this.$store.state.userInfo)
+        console.log(userInfo)
+        this.util.request(this.api.getUserInfo).then(res => {
+          if (res.code == 200) {
+            if (res.data.headimg == null) {
+              userInfo.headimg = this.util.getImage('/touxianga.png')
+            }
+            userInfo.name = res.data.name
+            userInfo.id = res.data.id
+            this.$store.commit('login', userInfo)
+          } else {
+            this.$store.commit('logout')
+          }
+        })
+      }
+    },
+    // 登出
+    logout() {
+      this.$store.commit('logout')
+    },
+    getHeight() {
+      const screenHeight = uni.getSystemInfoSync().windowHeight
+      const safeHeihgt = uni.getSystemInfoSync().safeArea.height
+      const height = screenHeight - safeHeihgt
+      this.paddingBottom = height + 20
+    }
+  }
+}
+</script>
+
+<style scoped>
+page{
+  background:#F6F6FA;
+}
+.box{
+  background: #F6F6FA;
+}
+.title{
+  padding:167rpx 30rpx 100rpx;
+  background:linear-gradient(to right top, #E7EEF5 0%,#FBF3FA 100%);
+}
+.info{
+  width:100%;
+  display:flex;
+  justify-content: space-between;
+}
+.userName{
+  color:#333;
+  font-weight:900;
+  font-size:48rpx;
+}
+.userName.text{
+  margin-left:30rpx;
+}
+.welcome{
+  display:block;
+  font-size: 24rpx;
+  color:#A8A1BA;
+  margin-top:25rpx;
+}
+.avatar{
+  width:140rpx;
+  height:140rpx;
+  position:relative;
+}
+.avatar image{
+  width:100%;
+  height:100%;
+}
+.setAvatar{
+  width:42rpx;
+  height:42rpx;
+  position:absolute;
+  bottom:0;
+  right:0;
+  background:#fff ;
+  border-radius:50%;
+  display:flex;
+  align-items: center;
+  justify-content: center;
+}
+.setAvatar text{
+  color:#007aff;
+  font-size:20rpx;
+}
+.msg{
+  padding:0 70rpx;
+  display: flex;
+  justify-content: space-between;
+  text-align: center;
+  margin-top:75rpx;
+}
+.msgData{
+  font-size:42rpx;
+  color:#333;
+  font-weight: 900;
+}
+.msgName{
+  display:block;
+  margin-top:20rpx;
+  color:#A8A1BA;
+  font-size:28rpx;
+}
+.content{
+  padding:32rpx 32rpx 0;
+  background:#F6F6FA;
+  border-radius:50rpx 50rpx 0 0;
+  position:relative;
+  top:-40rpx;
+  box-shadow: 0 -30rpx 30rpx -20rpx rgba(58,92,241,0.07);
+}
+.itemGroup{
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.item{
+  margin-bottom:16rpx;
+  padding:0 50rpx;
+  background:#fff;
+  border-radius:20rpx;
+  text-align: center;
+  font-size:24rpx;
+  color:#333;
+}
+.item1{
+  padding-top:40rpx;
+  padding-bottom:30rpx;
+}
+.itemContent{
+  display:flex;
+  justify-content: space-between;
+}
+.itemList{
+  height:120rpx;
+  display:flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.mineGroupText{
+  display:block;
+  margin-top:30rpx;
+}
+.listName{
+  margin-left:24rpx;
+}
+.back{
+  transform: rotate(180deg);
+  color:#B9B9B9;
+  font-size:22rpx;
+}
+.iconfont{
+  font-size:30rpx;
+  color:#333;
+}
+.avatarImg{
+  border-radius:50%;
+}
+.bgColor{
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #F6F6FA;
+  z-index: -1;
+}
+.iconImg{
+  height:55rpx;
+  width:45rpx;
+}
+</style>

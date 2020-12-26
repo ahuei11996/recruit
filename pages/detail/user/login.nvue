@@ -1,0 +1,260 @@
+<!--
+  Maintainer: Magiclock
+  create_time: 2020/12/06
+-->
+<template>
+  <view>
+    <view class="bg" />
+    <!--  默认  -->
+    <view v-if="isApp" class="box" :style="{height:height+'px'}">
+      <view class="content">
+        <view />
+        <view class="myInfo">
+          <text class="myPhone">18410706601</text>
+          <text class="phoneText">中国移动提供认证服务</text>
+        </view>
+        <view class="login">
+          <u-button :custom-style="my" class="my" type="primary" hover-class="none">本机号码一键登录</u-button>
+          <u-button :custom-style="other" class="other" type="info" hover-class="none" @click="util.navTo('/pages/user/loginByPhone')">其他手机号码登录</u-button>
+          <text class="protocol">
+            为保障您的个人隐私权益，请在登陆前仔细阅读
+            <text class="subText">中国移动认证服务条款</text>
+            以及
+            <text class="subText">系统用户隐私协议</text>
+          </text>
+        </view>
+        <view />
+        <thirdParty />
+      </view>
+    </view>
+    <!--  小程序  -->
+    <view v-else class="MPLogin" :style="{height:height+'px'}">
+      <view class="top">
+        <view class="MPContent">
+          <image mode="aspectFit" :src="util.getImage('/MPLoginLogo.png')" />
+          <view class="btnLogin">
+            <button class="btn" open-type="getPhoneNumber" @click="getId" @getphonenumber="getPhoneNumber">微信一键登录</button>
+            <navigator hover-class="none" url="/pages/user/loginByPhone?type=0" class="link">手机号码登录/注册</navigator>
+          </view>
+        </view>
+      </view>
+      <view class="bottom">
+        <text>登录代表您已同意</text>
+        <navigator hover-class="none" class="xieyi" url="/detail/agreement/system">《系统用户隐私协议》</navigator>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+
+export default {
+  name: 'Login',
+  data() {
+    return {
+      isApp: true,
+      // APP
+      phone: '',
+      openid: '',
+      height: 0,
+      my: {
+        fontSize: '30rpx',
+        height: '94rpx'
+      },
+      other: {
+        height: '94rpx',
+        marginTop: '15rpx',
+        color: '#666',
+        fontSize: '32rpx',
+        border: 'none'
+      },
+      // 小程序
+      code: ''
+    }
+  },
+  mounted() {
+    this.getHeight()
+    // #ifdef MP
+    this.isApp = false
+    // #endif
+  },
+  methods: {
+    // 默认函数
+
+    getHeight() {
+      const maxHeight = uni.getSystemInfoSync().safeArea.height
+      const statusHeight = this.util.getSystemInfo().statusBarHeight
+      this.height = maxHeight - statusHeight - 45
+    },
+
+    // 小程序函数
+    // 获取电话号
+    getPhoneNumber(e) {
+      const detail = e.detail
+      console.log(detail)
+      const data = {
+        platform: 2,
+        code: this.code,
+        encryptedData: detail.encryptedData,
+        iv: detail.iv
+      }
+      console.log(this.api.third)
+
+      this.util.request(this.api.third, data).then(res => {
+        if (res.code == 200) {
+          const data = res.data
+          // 保存到store
+          this.$store.commit('login',data)
+          // this.login(data)
+          // console.log(data)
+          // 缓存用户信息
+          // uni.setStorage({
+          //   key: 'userInfo',
+          //   data: data
+          // })
+          // uni.setStorageSync('userInfo', data)
+          // 缓存token
+          // uni.setStorage({
+          //   key: 'token',
+          //   data: data.token
+          // })
+          // uni.setStorageSync('token', data.token)
+
+          uni.switchTab({
+            url: '/pages/user/mine'
+          })
+        }
+      })
+    },
+    // 获取ID
+    getId() {
+      const that = this
+      uni.login({
+        provider: 'weixin',
+        success: (res) => {
+          console.log(res)
+          that.code = res.code
+          uni.getUserInfo({
+            provider: 'weixin',
+            success: res => {
+              console.log(res)
+            },
+            fail: err => {
+              console.log(err)
+            },
+            complete: com => {
+              console.log(com)
+            }
+          })
+        }
+      })
+    }
+  }
+}
+</script>
+
+<style scoped>
+/*默认样式*/
+.bg{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  background:#fff;
+  z-index:-1;
+}
+.box{
+  padding:40rpx 40rpx 0;
+}
+.content{
+  display:flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height:100%;
+}
+.myInfo{
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.myPhone{
+  font-size:60rpx;
+  color:#000;
+}
+.phoneText{
+  font-size:24rpx;
+  color:#000;
+  margin-top:10rpx;
+}
+.login{
+  padding:0 20rpx;
+}
+.my{
+  font-size:30rpx;
+  height:94rpx;
+}
+.other{
+  height:94rpx;
+  margin-top:15rpx;
+  color:#666;
+  font-size:32rpx;
+}
+.other:after{
+  border:none;
+}
+.protocol{
+  display:block;
+  font-size:22rpx;
+  color:#ccc;
+  margin-top:40rpx;
+}
+.subText{
+  color:blue
+}
+
+/*小程序样式*/
+.MPLogin{
+  display:flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.MPContent{
+  padding:40rpx 40rpx 0;
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+}
+.btn{
+  width:100%;
+  height:88rpx;
+  background:#2979ff;
+  border-radius:10rpx;
+  color:#fff;
+  font-size:30rpx;
+  line-height:88rpx;
+}
+
+.bottom{
+  padding-bottom:20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size:24rpx;
+  color:#9b9b9b;
+}
+.xieyi{
+  color:#2979ff;
+}
+.link{
+  margin-top:40rpx;
+  color:#606992;
+  text-align: center;
+}
+.btnLogin{
+  width:100%;
+  margin-top:120rpx;
+}
+</style>

@@ -1,0 +1,52 @@
+<template>
+	<view>
+		<view @click="getApp.$common.toPage({url:`/pages/chat/message`})">
+			<image src='../../static/logo.png'></image>
+			<view>
+				<view>
+					<text>mr.m</text>
+					<text>xxxxxxx</text>
+				</view>
+				<view>
+					<text>[已读]xxxxxxxx</text>
+				</view>
+			</view>
+		</view>
+		<view>
+			<image src='../../static/logo.png'></image>
+			<view>
+				<view>
+					<text>mr.m</text>
+					<text>xxxxxxx</text>
+				</view>
+				<view>
+					<text>[未读]xxxxxxxx</text>
+				</view>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script>
+	export default {
+		name: "chat",
+		data() {
+			return {
+				getApp
+			}
+		},
+		onLoad() {
+			// #ifdef APP-NVUE
+			this.getApp = getApp()
+			// #endif
+
+			// #ifndef APP-NVUE
+			this.getApp = this
+			// #endif
+		}
+	}
+</script>
+
+<style>
+
+</style>

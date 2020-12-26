@@ -1,0 +1,184 @@
+<template>
+	<view class="flex-column" stlye="justify-content: space-between;" :style="{height: winHeight + 'px'}">
+		<view class="padding-x padding-y-l flex-auto-size">
+			<m-list>
+				<m-cell class="padding-y" v-for="(message,index) in messages" :key="index">
+					<!-- <view :class="{'flex-row': message.uid != userid,'flex-row-reverse': message.uid == userid}">
+						<view :class="{'flex-column': message.uid != userid,'flex-row-reverse': message.uid == userid}" style="width: 602rpx;">
+							<image class="no-flex-auto-size headimg border-radius" :src="message.headimg"></image>
+							<view class="flex-row" :class="{'margin-left': message.uid != userid,'margin-right': message.uid == userid}"
+							 style="width: 494rpx;">
+								<view class="padding border-radius-m " :class="{'flex-auto-size': message.text.length > 48}" :style="{'background-color': message.uid == userid ? '#0081FF' : '#ffffff'}">
+									<text class="message-text" :style="{'color': message.uid == userid ? '#ffffff' : '#333333'}">{{message.text}}</text>
+								</view>
+							</view>
+						</view>
+					</view> -->
+					<view v-if="message.uid != userid" class="flex-column">
+						<view class="flex-column" style="width: 602rpx;">
+							<image class="no-flex-auto-size headimg border-radius" :src="message.headimg"></image>
+							<view  :class="{'flex-row':message.text.length <= 20, 'flex-column' :message.text.length > 20}" style="width: 494rpx; margin-top: -84rpx; margin-left: 108rpx">
+								<view class="padding border-radius-m" style="border-top-left-radius:0; background-color:#ffffff;">
+									<text class="message-text" style="color:#333333;">{{ message.text }}</text>
+								</view>
+							</view>
+						</view>
+
+					</view>
+
+					<view v-else class="flex-column">
+						<view class="flex-column" style="width: 710rpx; margin-left: 108rpx;">
+							<image class="no-flex-auto-size headimg border-radius" style="margin-left: 520rpx; float: right;" :src="message.headimg"></image>
+							<view :class="{'flex-row-reverse':message.text.length <= 20, 'flex-column' :message.text.length > 20}" style="width: 494rpx; margin-top: -84rpx;">
+								<view class="padding border-radius-m" style="border-top-right-radius:0; background-color:#0081FF;">
+									<text class="message-text" style="color:#ffffff;">{{message.text}}</text>
+								</view>
+							</view>
+						</view>
+					</view>
+				</m-cell>
+			</m-list>
+		</view>
+		<view class="no-flex-auto-size input-bottom padding-x" id="input-bottom">
+			<view class="flex-row input-bottom-content">
+				<view class="no-flex-auto-size other-button flex-row" style="justify-content: center; align-items: center;">
+					<text class="other-button-text">常用语</text>
+				</view>
+				<input class="margin-left-l padding-x flex-auto-size" style="font-size: 26rpx; height: 38rpx;" placeholder-style="font-size: 26rpx;" placeholder="新消息" />
+				<text class="margin-left-l iconfont no-flex-auto-size icon-button">&#xe632;</text>
+				<text class="margin-left-l iconfont no-flex-auto-size icon-button">&#xe71f;</text>
+			</view>
+		</view>
+	</view>
+
+</template>
+
+<script>
+	export default {
+		name: "message",
+		data() {
+			return {
+				winHeight: 0,
+				userid: 2,
+				messages: [{
+						uid: 1,
+						headimg: '../../static/logo.png',
+						text: '你好'
+					},
+					{
+						uid: 2,
+						headimg: '../../static/logo.png',
+						text: '你好你好你好你好你好你好'
+					},
+					{
+						uid: 2,
+						headimg: '../../static/logo.png',
+						text: '你好你好你好你好你好你好你好你好你你你你'
+					},
+					{
+						
+						
+						uid: 2,
+						headimg: '../../static/logo.png',
+						text: '你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好'
+					},
+					{
+							uid: 1,
+							headimg: '../../static/logo.png',
+							text: '你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好'
+						},
+				]
+			}
+		},
+		onLoad() {
+			// #ifdef APP-NVUE
+			this.getApp = getApp()
+			// #endif
+
+			// #ifndef APP-NVUE
+			this.getApp = this
+			// #endif
+
+
+		},
+		mounted() {
+			let query = uni.createSelectorQuery().select("#input-bottom")
+			this.winHeight = this.getApp.$common.system.windowHeight - this.getApp.$common.system.statusBarHeight - 44
+			console.log(this.messages)
+		}
+	}
+</script>
+
+<style>
+	.padding {
+		padding-top: 20rpx;
+		padding-left: 20rpx;
+		padding-bottom: 20rpx;
+		padding-right: 20rpx;
+	}
+
+	.padding-x {
+		padding-left: 20rpx;
+		padding-right: 20rpx;
+	}
+
+	.padding-x-l {
+		padding-left: 40rpx;
+		padding-right: 40rpx;
+	}
+
+	.padding-y {
+		padding-top: 20rpx;
+		padding-bottom: 20rpx;
+	}
+
+	.padding-y-l {
+		padding-top: 40rpx;
+		padding-bottom: 40rpx;
+	}
+
+	.margin-left {
+		margin-left: 20rpx;
+	}
+
+	.margin-right {
+		margin-right: 20rpx;
+	}
+
+	.margin-left-l {
+		margin-left: 40rpx;
+	}
+
+	.input-bottom {
+		background-color: #ffffff;
+		width: 750rpx;
+	}
+
+	.input-bottom-content {
+		justify-content: space-between;
+		align-items: center;
+		height: 88rpx;
+	}
+
+	.other-button {
+		height: 48rpx;
+		line-height: 48rpx;
+		width: 102rpx;
+		background-color: #1570f9;
+		text-align: center;
+	}
+
+	.other-button-text {
+		color: #ffffff;
+		font-size: 20rpx;
+	}
+
+	.icon-button {
+		font-size: 40rpx;
+	}
+
+	.message-text {
+		font-size: 24rpx;
+		line-height: 48rpx;
+	}
+</style>

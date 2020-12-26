@@ -1,0 +1,90 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/update/index",
+			"style": {
+				"navigationStyle": "custom",
+				"app-plus": {
+					"titleNView": false
+				}
+			}
+		},
+		{
+			"path": "pages/chat/message",
+			"style": {
+				"navigationBarTitleText": "聊天",
+				"app-plus": {
+					// "titleNView": false
+				}
+			}
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8",
+		// #ifdef APP_PLUS
+		"rpxCalcMaxDeviceWidth": 1024,
+		// rpx 计算所支持的最大设备宽度，单位 px，默认值为 960
+		"rpxCalcBaseDeviceWidth": 375,
+		// rpx 计算使用的基准设备宽度，设备实际宽度超出 rpx 计算所支持的最大设备宽度时将按基准宽度计算，单位 px，默认值为 375
+		"rpxCalcIncludeWidth": 750,
+		// rpx 计算特殊处理的值，始终按实际的设备宽度计算，单位 rpx，默认值为 750
+
+		// #endif
+		"app-plus": {
+			"scrollIndicator": "none",
+			//全局 在APP页面都不显示滚动条，
+
+			"softinputNavBar": "none" //去除ios键盘上方横条
+		}
+	},
+	"tabBar": {
+		"color": "#333333",
+		"selectedColor": "#019bff",
+		"borderStyle": "white",
+		"backgroundColor": "#ffffff",
+		"blurEffect": "extralight",
+		"spacing": "9px",
+		"iconWidth": "26px",
+		"height": "68px",
+		"list": [{
+				"pagePath": "pages/index/index",
+				"iconPath": "static/tab/index.png",
+				"selectedIconPath": "static/tab/index-c.png",
+				"text": "首页"
+			},
+			{
+				"pagePath": "pages/news/index",
+				"iconPath": "static/tab/news.png",
+				"selectedIconPath": "static/tab/news-c.png",
+				"text": "公告"
+			},
+			{
+				"pagePath": "pages/find/index",
+				"iconPath": "static/tab/find.png",
+				"selectedIconPath": "static/tab/find-c.png",
+				"text": "发现"
+			},
+			{
+				"pagePath": "pages/chat/index",
+				"iconPath": "static/tab/chat.png",
+				"selectedIconPath": "static/tab/chat-c.png",
+				"text": "消息"
+			},
+			{
+				"pagePath": "pages/user/index",
+				"iconPath": "static/tab/user.png",
+				"selectedIconPath": "static/tab/user-c.png",
+				"text": "我的"
+			}
+		]
+	}
+}

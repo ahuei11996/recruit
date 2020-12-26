@@ -1,0 +1,25 @@
+/**
+Maintainer: Magiclock
+update_time: 2020/12/04
+*/
+
+$icon-path: 'font_2293389_kyk2x6jnpi';
+
+[class*="icon-"] {
+  font-family: "iconfont";
+  font-style: normal;
+}
+
+.iconfont{
+    font-family: iconfont;
+}
+
+@font-face {
+  font-family: 'iconfont';  /* project id 2245848 */
+  src: url('https://at.alicdn.com/t/'+ $icon-path +'.eot');
+  src: url('https://at.alicdn.com/t/'+ $icon-path +'.eot?#iefix') format('embedded-opentype'),
+  url('https://at.alicdn.com/t/'+ $icon-path +'.woff2') format('woff2'),
+  url('https://at.alicdn.com/t/'+ $icon-path +'.woff') format('woff'),
+  url('https://at.alicdn.com/t/'+ $icon-path +'.ttf') format('truetype'),
+  url('https://at.alicdn.com/t/'+ $icon-path +'.svg#iconfont') format('svg');
+}
